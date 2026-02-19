@@ -1,0 +1,291 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Bricolage+Grotesque:wght@400;600;700;800&display=swap');
+
+/* ─────────────────────────────────────────
+   RESET
+───────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+button { font-family: inherit; }
+
+/* ─────────────────────────────────────────
+   THEME 1 — LUXURY DARK
+   Dark navy, glowing numbers, glass cards
+───────────────────────────────────────── */
+:root,
+[data-theme="dark"] {
+  --bg:              #070b13;
+  --bg2:             #0c1220;
+  --bg3:             #111827;
+  --border:          rgba(255,255,255,0.07);
+  --border-strong:   rgba(255,255,255,0.12);
+  --card:            rgba(255,255,255,0.035);
+  --card-hover:      rgba(255,255,255,0.055);
+  --card-border:     rgba(255,255,255,0.07);
+  --card-shadow:     0 4px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+  --sidebar-bg:      #0c1220;
+  --sidebar-border:  rgba(255,255,255,0.05);
+  --topbar-bg:       #0c1220;
+  --text:            #f0f4ff;
+  --text2:           #8892b0;
+  --text3:           #4a5568;
+  --text-muted:      #2d3748;
+  --accent:          #818cf8;
+  --accent-dim:      rgba(129,140,248,0.15);
+  --accent2:         #34d399;
+  --accent3:         #c084fc;
+  --val-sys:         #60a5fa;
+  --val-dia:         #34d399;
+  --val-pulse:       #c084fc;
+  --green:           #10b981;
+  --yellow:          #f59e0b;
+  --orange:          #f97316;
+  --red:             #f87171;
+  --red-dim:         rgba(248,113,113,0.12);
+  --btn-primary-bg:  linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --btn-primary-shadow: 0 4px 16px rgba(99,102,241,0.4);
+  --input-bg:        rgba(255,255,255,0.05);
+  --input-focus:     0 0 0 3px rgba(99,102,241,0.2);
+  --nav-active-bg:   rgba(129,140,248,0.12);
+  --nav-active-color: #a5b4fc;
+  --nav-active-border: rgba(129,140,248,0.25);
+  --nav-color:       rgba(255,255,255,0.35);
+  --settings-text:   rgba(255,255,255,0.3);
+  --font-display:    'Geist', sans-serif;
+  --font-body:       'Geist', sans-serif;
+  --font-mono:       'DM Mono', monospace;
+  --radius:          14px;
+  --radius-sm:       8px;
+  --radius-lg:       18px;
+}
+
+/* ─────────────────────────────────────────
+   THEME 2 — CLEAN CLINICAL
+   Warm white, editorial, dark hero accent
+───────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:              #faf9f6;
+  --bg2:             #ffffff;
+  --bg3:             #f0ebe3;
+  --border:          #e4ddd4;
+  --border-strong:   #c9c0b4;
+  --card:            #ffffff;
+  --card-hover:      #fdf9f5;
+  --card-border:     #e4ddd4;
+  --card-shadow:     0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03);
+  --sidebar-bg:      #f0ebe3;
+  --sidebar-border:  #e4ddd4;
+  --topbar-bg:       #ffffff;
+  --text:            #1c1209;
+  --text2:           #6b5740;
+  --text3:           #a8927a;
+  --text-muted:      #cbbfb0;
+  --accent:          #2563eb;
+  --accent-dim:      rgba(37,99,235,0.08);
+  --accent2:         #0891b2;
+  --accent3:         #7c3aed;
+  --val-sys:         #1d4ed8;
+  --val-dia:         #0e7490;
+  --val-pulse:       #6d28d9;
+  --green:           #059669;
+  --yellow:          #b45309;
+  --orange:          #c2410c;
+  --red:             #dc2626;
+  --red-dim:         rgba(220,38,38,0.08);
+  --btn-primary-bg:  #1c1209;
+  --btn-primary-shadow: 0 2px 10px rgba(28,18,9,0.25);
+  --input-bg:        #f0ebe3;
+  --input-focus:     0 0 0 3px rgba(37,99,235,0.15);
+  --nav-active-bg:   #ffffff;
+  --nav-active-color: #1c1209;
+  --nav-active-border: #e4ddd4;
+  --nav-color:       #a8927a;
+  --settings-text:   #a8927a;
+  --font-display:    'Cabinet Grotesk', sans-serif;
+  --font-body:       'Cabinet Grotesk', sans-serif;
+  --font-mono:       'DM Mono', monospace;
+  --radius:          12px;
+  --radius-sm:       7px;
+  --radius-lg:       16px;
+}
+
+/* ─────────────────────────────────────────
+   THEME 3 — BOLD MODERN
+   Cool blue-white bg, dark navy sidebar, vivid accents
+───────────────────────────────────────── */
+[data-theme="blue"] {
+  --bg:              #eef2ff;
+  --bg2:             #ffffff;
+  --bg3:             #e0e7ff;
+  --border:          #c7d2fe;
+  --border-strong:   #a5b4fc;
+  --card:            #ffffff;
+  --card-hover:      #f5f7ff;
+  --card-border:     #dde4fd;
+  --card-shadow:     0 2px 16px rgba(102,126,234,0.1), 0 0 0 1px rgba(102,126,234,0.06);
+  --sidebar-bg:      #1a1f3c;
+  --sidebar-border:  rgba(255,255,255,0.06);
+  --topbar-bg:       #ffffff;
+  --text:            #1a1f3c;
+  --text2:           #4a5280;
+  --text3:           #8892b0;
+  --text-muted:      #b8c0d8;
+  --accent:          #667eea;
+  --accent-dim:      rgba(102,126,234,0.1);
+  --accent2:         #06b6d4;
+  --accent3:         #a855f7;
+  --val-sys:         #667eea;
+  --val-dia:         #06b6d4;
+  --val-pulse:       #a855f7;
+  --green:           #10b981;
+  --yellow:          #f59e0b;
+  --orange:          #f97316;
+  --red:             #ef4444;
+  --red-dim:         rgba(239,68,68,0.08);
+  --btn-primary-bg:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --btn-primary-shadow: 0 4px 16px rgba(102,126,234,0.4);
+  --input-bg:        #e8eeff;
+  --input-focus:     0 0 0 3px rgba(102,126,234,0.2);
+  --nav-active-bg:   rgba(255,255,255,0.12);
+  --nav-active-color: #ffffff;
+  --nav-active-border: rgba(255,255,255,0.12);
+  --nav-color:       rgba(255,255,255,0.38);
+  --settings-text:   rgba(255,255,255,0.3);
+  --font-display:    'Bricolage Grotesque', sans-serif;
+  --font-body:       'Bricolage Grotesque', sans-serif;
+  --font-mono:       'DM Mono', monospace;
+  --radius:          12px;
+  --radius-sm:       8px;
+  --radius-lg:       20px;
+}
+
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+/* ─────────────────────────────────────────
+   SCROLLBAR
+───────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.2); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.12); }
+  70%       { transform: scale(1); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.85); }
+}
+
+.fade-in  { animation: fadeUp  0.45s cubic-bezier(0.22,1,0.36,1) both; }
+.slide-in { animation: slideIn 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ─────────────────────────────────────────
+   CARD
+───────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px 26px;
+  box-shadow: var(--card-shadow);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ─────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.22,1,0.36,1);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.btn:active { transform: scale(0.96); }
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: white;
+  padding: 11px 22px;
+  box-shadow: var(--btn-primary-shadow);
+}
+.btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.btn-primary:active { transform: scale(0.96) translateY(0); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border);
+  padding: 10px 18px;
+}
+.btn-ghost:hover { background: var(--bg3); color: var(--text); border-color: var(--border-strong); }
+
+/* ─────────────────────────────────────────
+   INPUTS
+───────────────────────────────────────── */
+.input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 11px 14px;
+  transition: all 0.2s;
+  outline: none;
+}
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--input-focus);
+}
+.input::placeholder { color: var(--text3); }
+
+/* ─────────────────────────────────────────
+   SPINNER
+───────────────────────────────────────── */
+.spinner {
+  width: 28px; height: 28px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
