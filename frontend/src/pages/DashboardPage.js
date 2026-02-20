@@ -174,40 +174,44 @@ export default function DashboardPage() {
       </div>
 
       {/* ── FILTER BAR ── */}
-      <div style={{ display:'flex', gap:8, marginBottom: isMobile ? 18 : 26, overflowX:'auto', paddingBottom:4, WebkitOverflowScrolling:'touch', scrollbarWidth:'none', msOverflowStyle:'none' }}>
-        {RANGES.slice(0,5).map(r => (
-          <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range===r.value ? fA : fI}>{r.label}</button>
-        ))}
-        <div ref={pickerRef} style={{ position:'relative', flexShrink:0 }}>
-          <button onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display:'flex', alignItems:'center', gap:5 }}>
-            📅 {isCustom ? activeLabel : 'Custom'}
-          </button>
-          {isCustom && (
-            <button onClick={clearCustom} style={{ position:'absolute', top:-6, right:-6, width:18, height:18, borderRadius:'50%', background:'#ef4444', border:'2px solid var(--bg)', color:'#fff', fontSize:8, cursor:'pointer', fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', zIndex:2, lineHeight:1 }}>✕</button>
-          )}
-          {/* Desktop picker dropdown */}
-          {!isMobile && showPicker && (
-            <div style={{ position:'absolute', top:'calc(100% + 10px)', right:0, zIndex:300, background:'var(--bg2)', border:'1px solid var(--border-strong)', borderRadius:16, padding:20, boxShadow:'0 16px 48px rgba(0,0,0,0.3)', width:300 }}>
-              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
-                <span style={{ fontWeight:800, fontSize:14, color:'var(--text)' }}>📅 Date Range</span>
-                <button onClick={() => setShowPicker(false)} style={{ background:'none', border:'none', color:'var(--text3)', cursor:'pointer', fontSize:18, lineHeight:1 }}>✕</button>
-              </div>
-              <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginBottom:16 }}>
-                {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'30 Days',d:30},{l:'90 Days',d:90}].map(({l,d}) => (
-                  <button key={l} onClick={() => quickApply(d)} style={{ padding:'6px 12px', borderRadius:99, border:'1px solid var(--border)', background:'var(--bg3)', color:'var(--text2)', fontSize:12, fontWeight:600, cursor:'pointer' }}>{l}</button>
-                ))}
-              </div>
-              <label style={{ display:'block', fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>From</label>
-              <input type="date" className="input" value={customFrom} max={customTo||todayStr} onChange={e=>setCustomFrom(e.target.value)} style={{ fontSize:14, marginBottom:12, minHeight:44 }} />
-              <label style={{ display:'block', fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>To</label>
-              <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e=>setCustomTo(e.target.value)} style={{ fontSize:14, marginBottom:16, minHeight:44 }} />
-              <button className="btn btn-primary" onClick={applyCustom} style={{ width:'100%', minHeight:44 }}>Apply</button>
-            </div>
-          )}
+      {/* Wrapper: position:relative so the dropdown anchors to it, overflow:visible so dropdown is NOT clipped */}
+      <div ref={pickerRef} style={{ position:'relative', marginBottom: isMobile ? 18 : 26 }}>
+        <div style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:4, WebkitOverflowScrolling:'touch', scrollbarWidth:'none', msOverflowStyle:'none' }}>
+          {RANGES.slice(0,5).map(r => (
+            <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range===r.value ? fA : fI}>{r.label}</button>
+          ))}
+          <div style={{ position:'relative', flexShrink:0 }}>
+            <button onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display:'flex', alignItems:'center', gap:5 }}>
+              📅 {isCustom ? activeLabel : 'Custom'}
+            </button>
+            {isCustom && (
+              <button onClick={clearCustom} style={{ position:'absolute', top:-6, right:-6, width:18, height:18, borderRadius:'50%', background:'#ef4444', border:'2px solid var(--bg)', color:'#fff', fontSize:8, cursor:'pointer', fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', zIndex:2, lineHeight:1 }}>✕</button>
+            )}
+          </div>
         </div>
+
+        {/* Desktop dropdown — outside the overflow:auto div so it never gets clipped */}
+        {!isMobile && showPicker && (
+          <div style={{ position:'absolute', top:'calc(100% + 6px)', right:0, zIndex:9999, background:'var(--bg2)', border:'1px solid var(--border-strong)', borderRadius:16, padding:20, boxShadow:'0 16px 48px rgba(0,0,0,0.35)', width:300 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+              <span style={{ fontWeight:800, fontSize:14, color:'var(--text)' }}>📅 Date Range</span>
+              <button onClick={() => setShowPicker(false)} style={{ background:'none', border:'none', color:'var(--text3)', cursor:'pointer', fontSize:18, lineHeight:1 }}>✕</button>
+            </div>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginBottom:16 }}>
+              {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'30 Days',d:30},{l:'90 Days',d:90}].map(({l,d}) => (
+                <button key={l} onClick={() => quickApply(d)} style={{ padding:'6px 12px', borderRadius:99, border:'1px solid var(--border)', background:'var(--bg3)', color:'var(--text2)', fontSize:12, fontWeight:600, cursor:'pointer' }}>{l}</button>
+              ))}
+            </div>
+            <label style={{ display:'block', fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>From</label>
+            <input type="date" className="input" value={customFrom} max={customTo||todayStr} onChange={e=>setCustomFrom(e.target.value)} style={{ fontSize:14, marginBottom:12, minHeight:44 }} />
+            <label style={{ display:'block', fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>To</label>
+            <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e=>setCustomTo(e.target.value)} style={{ fontSize:14, marginBottom:16, minHeight:44 }} />
+            <button className="btn btn-primary" onClick={applyCustom} style={{ width:'100%', minHeight:44 }}>Apply</button>
+          </div>
+        )}
       </div>
 
-      {/* Date sheet — shown on mobile always, on desktop as fallback if dropdown fails */}
+      {/* Mobile bottom sheet */}
       {isMobile && (
         <DateSheet show={showPicker} onClose={() => setShowPicker(false)}
           customFrom={customFrom} customTo={customTo}
