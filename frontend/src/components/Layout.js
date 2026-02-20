@@ -33,13 +33,8 @@ export default function Layout() {
     applyTheme(key);
   };
 
-  // ✅ FIX: Both 'dark' AND 'blue' themes have dark sidebar backgrounds.
-  // Previously only 'blue' was flagged, causing 'dark' theme sidebar text to use
-  // wrong color values and appear faded/invisible.
   const hasDarkSidebar = theme === 'blue' || theme === 'dark';
 
-  // ✅ FIX: All sidebar text colors are now clearly readable across every theme.
-  // Opacity values raised from 0.28–0.38 (nearly invisible) to 0.55–0.7 (clearly readable).
   const S = {
     logoText:           hasDarkSidebar ? '#f0f4ff'                  : 'var(--sidebar-text)',
     logoSub:            hasDarkSidebar ? 'rgba(255,255,255,0.55)'   : 'var(--sidebar-text-sub)',
@@ -75,8 +70,6 @@ export default function Layout() {
         {/* ── Logo ── */}
         <div style={{ padding: '0 20px 30px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-
-            {/* ✅ SVG icon — crisp on every OS/browser, never blurry or broken */}
             <div style={{
               width: 40, height: 40, borderRadius: 12, flexShrink: 0,
               background: 'linear-gradient(145deg, #ff5f6d, #c0392b)',
@@ -91,7 +84,6 @@ export default function Layout() {
                   stroke="rgba(255,255,255,0.3)"
                   strokeWidth="0.5"
                 />
-                {/* ECG / pulse line across the heart */}
                 <path
                   d="M6 11h2l1.5-3 2 6 1.5-4.5 1 1.5H18"
                   stroke="rgba(255,100,100,0.9)"
@@ -251,7 +243,6 @@ export default function Layout() {
             style={{ background: 'none', border: 'none', color: 'var(--text)', fontSize: 20, cursor: 'pointer', marginRight: 14, padding: 4 }}>
             ☰
           </button>
-          {/* ✅ SVG logo in mobile header — consistent across all platforms */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
             <div style={{
               width: 28, height: 28, borderRadius: 8, flexShrink: 0,
@@ -274,7 +265,8 @@ export default function Layout() {
           <div onClick={() => setMobileOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99 }} />
         )}
 
-        <div style={{ padding: '34px 32px', maxWidth: 1060, margin: '0 auto' }}>
+        {/* ✅ FIXED: Responsive padding for mobile */}
+        <div style={{ padding: 'clamp(16px, 4vw, 34px) clamp(14px, 4vw, 32px)', maxWidth: 1060, margin: '0 auto' }}>
           <Outlet />
         </div>
       </main>
