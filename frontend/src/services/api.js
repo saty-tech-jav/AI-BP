@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-// In production (Railway), uses REACT_APP_API_URL env variable
-// In local development, falls back to proxy (/api → localhost:8080)
-const API = axios.create({ 
+const API = axios.create({
   baseURL: 'https://ai-bp-production.up.railway.app/api'
 });
 
@@ -34,8 +32,11 @@ export const readingsAPI = {
   voiceSave: (text) => API.post('/readings/voice-save', { text }),
   getAll: () => API.get('/readings/all'),
   getByRange: (range) => API.get(`/readings?range=${range}`),
+  getByCustomRange: (from, to) => API.get(`/readings?from=${from}&to=${to}`),
   getGraph: (range) => API.get(`/readings/graph?range=${range}`),
+  getGraphCustom: (from, to) => API.get(`/readings/graph?from=${from}&to=${to}`),
   getSummary: (range) => API.get(`/readings/summary?range=${range}`),
+  getSummaryCustom: (from, to) => API.get(`/readings/summary?from=${from}&to=${to}`),
   delete: (id) => API.delete(`/readings/${id}`),
 };
 

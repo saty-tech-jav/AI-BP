@@ -193,22 +193,49 @@ public class ReadingService {
     }
 
     public String classifyBP(double sys, double dia) {
+
+        if (sys < 90 || dia < 60) return "Low BP";
+
         if (sys > 180 || dia > 120) return "Hypertensive Crisis";
+
         if (sys >= 140 || dia >= 90) return "High BP Stage 2";
+
         if (sys >= 130 || dia >= 80) return "High BP Stage 1";
-        if (sys >= 120 && dia < 80) return "Elevated";
+
+        if (sys >= 120 && sys <= 129 && dia < 80) return "Elevated";
+
         if (sys < 120 && dia < 80) return "Normal";
+
         return "Unknown";
     }
 
+
     private String generateSuggestion(String category, double pulse, double sys, double dia) {
+
         return switch (category) {
-            case "Normal" -> "Excellent! Your blood pressure is in the optimal range. Keep up your healthy lifestyle with regular exercise and balanced diet.";
-            case "Elevated" -> "Your BP is slightly elevated. Consider reducing sodium intake, staying hydrated, and monitoring more frequently. Lifestyle changes can help bring it to normal.";
-            case "High BP Stage 1" -> "Your blood pressure is in Stage 1 Hypertension range. It is recommended to consult your doctor. Consider the DASH diet, regular aerobic exercise, and stress reduction techniques.";
-            case "High BP Stage 2" -> "Your blood pressure is in Stage 2 Hypertension range. Please consult your doctor promptly. Medication may be required alongside lifestyle modifications.";
-            case "Hypertensive Crisis" -> "URGENT: Your blood pressure readings indicate a hypertensive crisis. Seek immediate medical attention if you experience symptoms like chest pain, shortness of breath, or severe headache.";
-            default -> "Please continue logging readings for better analysis.";
+
+            case "Low BP" ->
+                    "Your blood pressure is lower than the normal range. If you feel dizziness, fainting, or weakness, consult a doctor. Stay hydrated and avoid sudden position changes.";
+
+            case "Normal" ->
+                    pulse >= 60 && pulse <= 100
+                            ? "Excellent! Your blood pressure and pulse are within normal range. Maintain regular exercise, balanced diet, and routine monitoring."
+                            : "Your blood pressure is normal, but pulse is outside the typical resting range (60-100 bpm). Consider monitoring and consulting a healthcare provider if persistent.";
+
+            case "Elevated" ->
+                    "Your BP is slightly elevated. Reduce sodium intake, maintain a healthy weight, exercise regularly, and monitor frequently to prevent progression to hypertension.";
+
+            case "High BP Stage 1" ->
+                    "Your blood pressure falls in Stage 1 Hypertension. Lifestyle changes such as the DASH diet, aerobic exercise, stress management, and limiting alcohol are strongly recommended. Consult your doctor for evaluation.";
+
+            case "High BP Stage 2" ->
+                    "Your blood pressure is in Stage 2 Hypertension range. Medical consultation is strongly advised. Medication along with lifestyle modifications may be necessary.";
+
+            case "Hypertensive Crisis" ->
+                    "URGENT: Your reading indicates a hypertensive crisis. If you experience chest pain, shortness of breath, vision changes, or severe headache, seek emergency medical attention immediately.";
+
+            default ->
+                    "Please continue logging readings regularly for better health analysis.";
         };
     }
 
