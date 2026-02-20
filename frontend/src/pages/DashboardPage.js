@@ -204,8 +204,8 @@ export default function DashboardPage() {
 
         {/* DESKTOP dropdown — outside overflow container so it doesn't get clipped */}
         {!isMobile && showPicker && (
-          <div style={{ position: 'relative', zIndex: 200, marginTop: 8 }}>
-            <div style={{ background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.2)', maxWidth: 300 }}>
+          <div style={{ zIndex: 200, marginTop: 8 }}>
+            <div className="date-picker-popover" style={{ background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.2)', maxWidth: 300 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)' }}>📅 Select Date Range</div>
                 <button onClick={() => setShowPicker(false)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: '0 4px' }}>✕</button>

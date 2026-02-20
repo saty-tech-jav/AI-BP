@@ -131,8 +131,8 @@ export default function HistoryPage() {
       let readRes, sumRes;
       if (isCustom) {
         [readRes, sumRes] = await Promise.all([
-          readingsAPI.getByRange(`custom&from=${customFrom}&to=${customTo}`),
-          readingsAPI.getSummary(`custom&from=${customFrom}&to=${customTo}`),
+          readingsAPI.getByCustomRange(customFrom, customTo),
+          readingsAPI.getSummaryCustom(customFrom, customTo),
         ]);
       } else if (range === 'all') {
         [readRes, sumRes] = await Promise.all([readingsAPI.getAll(), readingsAPI.getSummary('all')]);
@@ -237,8 +237,8 @@ ${summary&&summary.totalReadings>0?`<div class="sum-grid"><div class="sum-card">
 
       {/* Custom date picker dropdown — OUTSIDE the overflow row so it doesn't get clipped */}
       {showPicker && (
-        <div ref={dropdownRef} style={{ position: 'relative', zIndex: 300, marginBottom: 10 }}>
-          <div style={{ background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', maxWidth: 320 }}>
+        <div ref={dropdownRef} style={{ zIndex: 300, marginBottom: 10 }}>
+          <div className="date-picker-popover" style={{ background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', maxWidth: 320 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)' }}>📅 Select Date Range</div>
               <button onClick={() => setShowPicker(false)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: '0 4px' }}>✕</button>

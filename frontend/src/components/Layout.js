@@ -213,15 +213,15 @@ export default function Layout() {
         )}
 
         {/* PAGE CONTENT */}
-        <div style={{ padding: isMobile ? '12px 10px 90px 10px' : 'clamp(16px,4vw,34px) clamp(14px,4vw,32px)', maxWidth: 1060, margin: '0 auto', width: '100%', flex: 1, boxSizing: 'border-box' }}>
+        <div style={{ padding: isMobile ? '12px 10px 100px 10px' : 'clamp(16px,4vw,34px) clamp(14px,4vw,32px)', maxWidth: 1060, margin: '0 auto', width: '100%', flex: 1, boxSizing: 'border-box' }}>
           <Outlet />
         </div>
 
         {/* MOBILE BOTTOM NAV */}
         {isMobile && (
-          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 150, background: 'var(--card)', borderTop: '1px solid var(--border)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom, 6px)', boxShadow: '0 -4px 24px rgba(0,0,0,0.18)' }}>
+          <div className="mobile-bottomnav" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 150, background: 'var(--card)', borderTop: '1px solid var(--border)', display: 'flex', paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 10px)', boxShadow: '0 -4px 24px rgba(0,0,0,0.18)' }}>
             {NAV.map(({ to, icon, label }) => (
-              <NavLink key={to} to={to} style={({ isActive }) => ({ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '7px 0 5px', textDecoration: 'none', color: isActive ? 'var(--accent)' : 'var(--text3)', transition: 'all 0.2s' })}>
+              <NavLink key={to} to={to} style={({ isActive }) => ({ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 10, paddingBottom: 6, textDecoration: 'none', color: isActive ? 'var(--accent)' : 'var(--text3)', transition: 'all 0.2s', minHeight: 56 })}>
                 <BottomNavItem icon={icon} label={label} to={to} />
               </NavLink>
             ))}
