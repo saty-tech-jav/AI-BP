@@ -55,7 +55,7 @@ const MobileDateModal = ({ show, onClose, customFrom, customTo, setCustomFrom, s
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, backdropFilter: 'blur(3px)' }} />
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', padding: '8px 16px 48px', boxShadow: '0 -8px 40px rgba(0,0,0,0.4)' }}>
+      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', padding: '8px 16px max(env(safe-area-inset-bottom, 16px), 16px)', boxShadow: '0 -8px 40px rgba(0,0,0,0.4)' }}>
         <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '0 auto 20px' }} />
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: 'var(--text)', marginBottom: 20 }}>📅 Select Date Range</div>
         <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
@@ -359,7 +359,7 @@ export default function DashboardPage() {
       )}
 
       {isMobile && (
-        <button onClick={() => navigate('/log')} style={{ position: 'fixed', bottom: 76, right: 16, zIndex: 90, width: 52, height: 52, borderRadius: '50%', background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff' }}>
+        <button onClick={() => navigate('/log')} style={{ position: 'fixed', bottom: 20, right: 16, zIndex: 90, width: 52, height: 52, borderRadius: '50%', background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff' }}>
           ➕
         </button>
       )}

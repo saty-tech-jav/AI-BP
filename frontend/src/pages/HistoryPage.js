@@ -23,12 +23,12 @@ function MobileCard({ r, idx, onDelete, deleting }) {
   const cs = getCategoryStyle(r.category);
   return (
     <div style={{
-      background: 'var(--card)', borderRadius: 14, padding: '12px 14px',
-      marginBottom: 8, border: '1px solid var(--border)',
+      background: 'var(--card)', borderRadius: 12, padding: '10px 12px',
+      marginBottom: 6, border: '1px solid var(--border)',
       boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
     }}>
       {/* Top row: index + time + delete */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: 'var(--text3)', flexShrink: 0 }}>{idx}</div>
           <span style={{ fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--font-mono)' }}>{r.recordedAt}</span>
@@ -40,26 +40,26 @@ function MobileCard({ r, idx, onDelete, deleting }) {
       </div>
 
       {/* BP values row — compact horizontal */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 10, background: 'var(--bg3)', borderRadius: 10, padding: '10px 12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 8, background: 'var(--bg3)', borderRadius: 10, padding: '8px 10px' }}>
         {/* Systolic */}
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>SYS</div>
-          <div style={{ fontSize: 34, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1 }}>{r.systolic}</div>
+          <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 1 }}>SYS</div>
+          <div style={{ fontSize: 24, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1 }}>{r.systolic}</div>
           <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>mmHg</div>
         </div>
-        <div style={{ color: 'var(--text3)', fontSize: 20, fontWeight: 200, padding: '0 4px' }}>/</div>
+        <div style={{ color: 'var(--text3)', fontSize: 16, fontWeight: 200, padding: '0 4px' }}>/</div>
         {/* Diastolic */}
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>DIA</div>
-          <div style={{ fontSize: 34, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent2)', lineHeight: 1 }}>{r.diastolic}</div>
+          <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 1 }}>DIA</div>
+          <div style={{ fontSize: 24, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent2)', lineHeight: 1 }}>{r.diastolic}</div>
           <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>mmHg</div>
         </div>
         {r.pulse && (
           <>
-            <div style={{ width: 1, height: 44, background: 'var(--border)', margin: '0 8px' }} />
+            <div style={{ width: 1, height: 36, background: 'var(--border)', margin: '0 6px' }} />
             <div style={{ flex: 1, textAlign: 'center' }}>
-              <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>PULSE</div>
-              <div style={{ fontSize: 28, fontFamily: 'var(--font-display)', fontWeight: 800, color: '#a855f7', lineHeight: 1 }}>{r.pulse}</div>
+              <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 1 }}>PULSE</div>
+              <div style={{ fontSize: 20, fontFamily: 'var(--font-display)', fontWeight: 800, color: '#a855f7', lineHeight: 1 }}>{r.pulse}</div>
               <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>bpm</div>
             </div>
           </>
@@ -90,7 +90,7 @@ function MobileDateModal({ show, onClose, customFrom, customTo, setCustomFrom, s
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, backdropFilter: 'blur(3px)' }} />
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', padding: '8px 16px 48px', boxShadow: '0 -8px 40px rgba(0,0,0,0.4)' }}>
+      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', padding: '8px 16px max(env(safe-area-inset-bottom, 16px), 16px)', boxShadow: '0 -8px 40px rgba(0,0,0,0.4)' }}>
         <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '0 auto 20px' }} />
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: 'var(--text)', marginBottom: 20 }}>📅 Select Date Range</div>
         <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
