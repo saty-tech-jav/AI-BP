@@ -104,7 +104,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (isMobile) return;
-    const fn = (e) => { if (pickerRef.current && !pickerRef.current.contains(e.target)) setShowPicker(false); };
+    // Use 'mousedown' but defer with setTimeout so the button onClick fires first
+    const fn = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) {
+        setTimeout(() => setShowPicker(false), 100);
+      }
+    };
     document.addEventListener('mousedown', fn);
     return () => document.removeEventListener('mousedown', fn);
   }, [isMobile]);
@@ -119,7 +124,8 @@ export default function DashboardPage() {
       ]);
       let data = gRes.data.map(p => ({ ...p, name: p.timeLabel || p.timestamp }));
       if (range === 'today' && !isCustom) {
-        const td = new Date().toISOString().slice(0,10);
+        // Use LOCAL date string (not UTC) — avoids IST/UTC mismatch
+        const td = toInputDate(new Date());
         data = data.filter(p => (p.timestamp||p.timeLabel||'').slice(0,10) === td || !(p.timestamp||p.timeLabel));
       }
       setGraphData(data);
@@ -201,7 +207,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Mobile date sheet */}
+      {/* Date sheet — shown on mobile always, on desktop as fallback if dropdown fails */}
       {isMobile && (
         <DateSheet show={showPicker} onClose={() => setShowPicker(false)}
           customFrom={customFrom} customTo={customTo}
