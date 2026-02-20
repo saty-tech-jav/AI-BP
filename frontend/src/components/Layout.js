@@ -61,7 +61,7 @@ export default function Layout() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
 
-      {/* ── DESKTOP SIDEBAR ── */}
+      {/* Desktop Sidebar */}
       <aside className="sidebar" style={{
         width: 234,
         background: 'var(--sidebar-bg)',
@@ -165,19 +165,18 @@ export default function Layout() {
         }
       `}</style>
 
-      {/* ── MAIN ── */}
+      {/* Main */}
       <main className="main-content" style={{ flex: 1, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
         {/* Mobile Top Bar */}
         <div className="mobile-topbar" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '12px 16px',
+          padding: '10px 14px',
           background: 'var(--topbar-bg)',
           borderBottom: '1px solid var(--border)',
           position: 'sticky', top: 0, zIndex: 50,
           backdropFilter: 'blur(10px)',
         }}>
-          {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
             <div style={{ width: 32, height: 32, borderRadius: 10, background: 'linear-gradient(145deg,#ff5f6d,#c0392b)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(192,57,43,0.4)' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -189,8 +188,6 @@ export default function Layout() {
               VitalsSaathi<span style={{ color: '#ff5f6d' }}>.AI</span>
             </span>
           </div>
-
-          {/* Right: theme toggle + avatar */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <button onClick={() => {
               const themes = ['dark', 'light', 'blue'];
@@ -206,14 +203,13 @@ export default function Layout() {
           </div>
         </div>
 
-        {/* Overlay when desktop sidebar open on mobile (shouldn't happen but safe) */}
         {mobileOpen && (
           <div onClick={() => setMobileOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99 }} />
         )}
 
         {/* Page Content */}
         <div style={{
-          padding: isMobile ? '16px 14px 96px 14px' : 'clamp(16px,4vw,34px) clamp(14px,4vw,32px)',
+          padding: isMobile ? '14px 12px 86px 12px' : 'clamp(16px,4vw,34px) clamp(14px,4vw,32px)',
           maxWidth: 1060,
           margin: '0 auto',
           width: '100%',
@@ -223,7 +219,7 @@ export default function Layout() {
           <Outlet />
         </div>
 
-        {/* ── MOBILE BOTTOM NAV (like native app) ── */}
+        {/* Mobile Bottom Nav */}
         <div className="mobile-bottomnav" style={{
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
           background: 'var(--card)',

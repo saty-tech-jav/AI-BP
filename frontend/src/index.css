@@ -8,7 +8,6 @@ button { font-family: inherit; }
 
 /* ─────────────────────────────────────────
    THEME 1 — LUXURY DARK
-   Dark navy, glowing numbers, glass cards
 ───────────────────────────────────────── */
 :root,
 [data-theme="dark"] {
@@ -59,7 +58,6 @@ button { font-family: inherit; }
 
 /* ─────────────────────────────────────────
    THEME 2 — CLEAN CLINICAL
-   Warm white, editorial, dark hero accent
 ───────────────────────────────────────── */
 [data-theme="light"] {
   --bg:              #faf9f6;
@@ -109,7 +107,6 @@ button { font-family: inherit; }
 
 /* ─────────────────────────────────────────
    THEME 3 — BOLD MODERN
-   Cool blue-white bg, dark navy sidebar, vivid accents
 ───────────────────────────────────────── */
 [data-theme="blue"] {
   --bg:              #eef2ff;
@@ -288,4 +285,101 @@ body {
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
+}
+
+/* ─────────────────────────────────────────
+   MOBILE RESPONSIVE — PWA NATIVE FEEL
+───────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  body { font-size: 14px; }
+
+  .card {
+    padding: 16px 14px;
+    border-radius: 12px;
+  }
+
+  .btn {
+    min-height: 44px;
+    font-size: 14px;
+  }
+  .btn-primary { padding: 12px 20px; }
+
+  .input {
+    font-size: 16px !important;
+    padding: 13px 14px;
+    min-height: 48px;
+  }
+
+  .dash-row1 {
+    grid-template-columns: 1fr !important;
+  }
+  .dash-stats {
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .dash-stats .card {
+    padding: 12px 10px !important;
+  }
+  .dash-stats .card .stat-value {
+    font-size: 26px !important;
+  }
+
+  .chart-legend {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .filter-bar {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 4px !important;
+    scrollbar-width: none !important;
+  }
+  .filter-bar::-webkit-scrollbar { display: none !important; }
+  .filter-bar button { flex-shrink: 0 !important; }
+
+  .page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  .page-header h1 { font-size: 22px !important; }
+  .page-header .btn { width: 100% !important; }
+
+  .input-tabs { flex-wrap: wrap !important; }
+  .input-tabs button { flex: 1 !important; min-width: 90px !important; font-size: 13px !important; padding: 10px 8px !important; }
+
+  .mobile-bottomnav {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px) !important;
+  }
+
+  .mobile-topbar { padding: 10px 14px !important; }
+
+  .date-picker-popover {
+    position: fixed !important;
+    left: 12px !important;
+    right: 12px !important;
+    min-width: unset !important;
+    width: auto !important;
+  }
+
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+}
+
+@media (max-width: 380px) {
+  .card { padding: 12px 10px; }
+  .btn-primary { padding: 11px 16px; font-size: 13px; }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .card { padding: 18px 20px; }
+}
+
+@media (display-mode: standalone) {
+  .mobile-topbar {
+    padding-top: max(env(safe-area-inset-top, 0px), 10px) !important;
+  }
 }

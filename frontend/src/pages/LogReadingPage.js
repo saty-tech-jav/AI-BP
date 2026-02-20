@@ -12,14 +12,13 @@ const VOICE_EXAMPLES = [
 
 const InputTab = ({ active, onClick, children }) => (
   <button onClick={onClick} style={{
-    padding: '10px 20px', borderRadius: 8, border: 'none', cursor: 'pointer',
-    fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
+    padding: '10px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+    fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13,
     background: active ? 'linear-gradient(135deg, var(--accent), var(--accent2))' : 'var(--bg3)',
-    color: active ? 'white' : 'var(--text2)', transition: 'all 0.2s',
+    color: active ? 'white' : 'var(--text2)', transition: 'all 0.2s', flex: 1,
   }}>{children}</button>
 );
 
-// Get local datetime string in format "YYYY-MM-DDTHH:mm" without any UTC conversion
 const getLocalDateTimeString = () => {
   const now = new Date();
   const year = now.getFullYear();
@@ -42,7 +41,6 @@ export default function LogReadingPage() {
   const [error, setError] = useState('');
   const recognitionRef = useRef(null);
 
-  // Set default datetime using local time (no UTC shift)
   useEffect(() => {
     setForm(f => ({ ...f, recordedAt: getLocalDateTimeString() }));
   }, []);
@@ -89,26 +87,16 @@ export default function LogReadingPage() {
       const res = await readingsAPI.parseVoice(text);
       setParsedPreview(res.data);
       if (res.data.success) {
-        setForm(f => ({
-          ...f,
-          systolic: res.data.systolic || '',
-          diastolic: res.data.diastolic || '',
-          pulse: res.data.pulse || '',
-        }));
+        setForm(f => ({ ...f, systolic: res.data.systolic || '', diastolic: res.data.diastolic || '', pulse: res.data.pulse || '' }));
       }
-    } catch (e) {
-      setError('Parse failed');
-    }
+    } catch (e) { setError('Parse failed'); }
   };
 
   const handleSaveManual = async (e) => {
     e.preventDefault();
     setLoading(true); setError(''); setSuccess('');
     try {
-      // Send recordedAt exactly as the user selected — no UTC conversion
-      // Format: "YYYY-MM-DDTHH:mm" → "YYYY-MM-DDTHH:mm:ss" (just append seconds)
       const recordedAt = form.recordedAt ? `${form.recordedAt}:00` : null;
-
       const payload = {
         systolic: parseInt(form.systolic),
         diastolic: parseInt(form.diastolic),
@@ -132,17 +120,17 @@ export default function LogReadingPage() {
 
   return (
     <div className="fade-in" style={{ maxWidth: 640, margin: '0 auto' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em' }}>
+      <div style={{ marginBottom: 22 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em' }}>
           Log BP Reading
         </h1>
-        <p style={{ color: 'var(--text3)', marginTop: 4, fontSize: 14 }}>Record manually, by voice, or by typing naturally</p>
+        <p style={{ color: 'var(--text3)', marginTop: 4, fontSize: 13 }}>Record manually, by voice, or by typing naturally</p>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+      <div className="input-tabs" style={{ display: 'flex', gap: 7, marginBottom: 20 }}>
         <InputTab active={tab === 'manual'} onClick={() => { setTab('manual'); setParsedPreview(null); }}>✍️ Manual</InputTab>
         <InputTab active={tab === 'voice'} onClick={() => { setTab('voice'); setParsedPreview(null); }}>🎙️ Voice</InputTab>
-        <InputTab active={tab === 'text'} onClick={() => { setTab('text'); setParsedPreview(null); }}>💬 Type Naturally</InputTab>
+        <InputTab active={tab === 'text'} onClick={() => { setTab('text'); setParsedPreview(null); }}>💬 Type</InputTab>
       </div>
 
       {success && <div style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 8, padding: '12px 16px', marginBottom: 16, color: '#059669', fontSize: 14 }}>{success}</div>}
@@ -151,16 +139,13 @@ export default function LogReadingPage() {
       <div className="card">
         {tab === 'voice' && (
           <div>
-            <div style={{ textAlign: 'center', padding: '20px 0 32px' }}>
+            <div style={{ textAlign: 'center', padding: '20px 0 28px' }}>
               <button onClick={listening ? stopVoice : startVoice} style={{
                 width: 100, height: 100, borderRadius: '50%', border: 'none', cursor: 'pointer',
-                background: listening
-                  ? 'radial-gradient(circle, rgba(239,68,68,0.3), rgba(239,68,68,0.1))'
-                  : 'radial-gradient(circle, rgba(59,130,246,0.3), rgba(59,130,246,0.1))',
+                background: listening ? 'radial-gradient(circle, rgba(239,68,68,0.3), rgba(239,68,68,0.1))' : 'radial-gradient(circle, rgba(59,130,246,0.3), rgba(59,130,246,0.1))',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 36, transition: 'all 0.3s',
                 boxShadow: listening ? '0 0 0 10px rgba(239,68,68,0.15), 0 0 0 20px rgba(239,68,68,0.08)' : '0 0 0 10px rgba(59,130,246,0.1)',
-                animation: listening ? 'pulse 1.5s infinite' : 'none',
               }}>🎙️</button>
               <p style={{ color: listening ? 'var(--red)' : 'var(--text2)', marginTop: 16, fontFamily: 'var(--font-display)', fontWeight: 600 }}>
                 {listening ? 'Listening... Speak now' : 'Tap to start speaking'}
@@ -226,7 +211,7 @@ export default function LogReadingPage() {
         )}
 
         <form onSubmit={handleSaveManual}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 14 }}>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Systolic *</label>
               <input className="input" type="number" min="60" max="250" placeholder="120"
@@ -245,11 +230,7 @@ export default function LogReadingPage() {
           </div>
 
           {previewStyle && (
-            <div style={{
-              padding: '10px 14px', borderRadius: 8, marginBottom: 14,
-              background: previewStyle.bg, border: `1px solid ${previewStyle.border}`,
-              color: previewStyle.color, fontSize: 13, fontFamily: 'var(--font-display)', fontWeight: 600
-            }}>
+            <div style={{ padding: '10px 14px', borderRadius: 8, marginBottom: 14, background: previewStyle.bg, border: `1px solid ${previewStyle.border}`, color: previewStyle.color, fontSize: 13, fontFamily: 'var(--font-display)', fontWeight: 600 }}>
               Category: {previewCategory}
             </div>
           )}
