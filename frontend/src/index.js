@@ -1,7 +1,36 @@
+//import React from 'react';
+//import ReactDOM from 'react-dom/client';
+//import App from './App';
+//import './index.css';
+//
+//const root = ReactDOM.createRoot(document.getElementById('root'));
+//root.render(<React.StrictMode><App /></React.StrictMode>);
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
 import './index.css';
+import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<React.StrictMode><App /></React.StrictMode>);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+// ✅ Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+      .catch(err => console.log('❌ Service Worker failed:', err));
+  });
+}
+
+
+
+
+
+
+
