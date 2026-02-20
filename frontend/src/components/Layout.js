@@ -1,6 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+function BottomNavItem({ icon, label, to }) {
+  const location = useLocation();
+  const isActive = location.pathname === to || location.pathname.startsWith(to + '/');
+  return (
+    <>
+      <div style={{ width: 44, height: 27, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isActive ? 'var(--accent-dim)' : 'transparent', marginBottom: 2, transition: 'all 0.2s', transform: isActive ? 'scale(1.08)' : 'scale(1)' }}>
+        <span style={{ fontSize: 19 }}>{icon}</span>
+      </div>
+      <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: isActive ? 700 : 500, color: isActive ? 'var(--accent)' : 'var(--text3)' }}>{label}</span>
+      {isActive && <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--accent)', marginTop: 2 }} />}
+    </>
+  );
+}
 
 const NAV = [
   { to: '/dashboard', icon: '⚡', label: 'Dashboard' },
@@ -208,15 +222,7 @@ export default function Layout() {
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 150, background: 'var(--card)', borderTop: '1px solid var(--border)', display: 'flex', paddingBottom: 'env(safe-area-inset-bottom, 6px)', boxShadow: '0 -4px 24px rgba(0,0,0,0.18)' }}>
             {NAV.map(({ to, icon, label }) => (
               <NavLink key={to} to={to} style={({ isActive }) => ({ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '7px 0 5px', textDecoration: 'none', color: isActive ? 'var(--accent)' : 'var(--text3)', transition: 'all 0.2s' })}>
-                {({ isActive }) => (
-                  <>
-                    <div style={{ width: 44, height: 27, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isActive ? 'var(--accent-dim)' : 'transparent', marginBottom: 2, transition: 'all 0.2s', transform: isActive ? 'scale(1.08)' : 'scale(1)' }}>
-                      <span style={{ fontSize: 19 }}>{icon}</span>
-                    </div>
-                    <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: isActive ? 700 : 500, color: isActive ? 'var(--accent)' : 'var(--text3)' }}>{label}</span>
-                    {isActive && <div style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--accent)', marginTop: 2 }} />}
-                  </>
-                )}
+                <BottomNavItem icon={icon} label={label} to={to} />
               </NavLink>
             ))}
           </div>

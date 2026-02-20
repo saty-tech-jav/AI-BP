@@ -94,6 +94,7 @@ export default function HistoryPage() {
   const navigate = useNavigate();
   const todayStr = toInputDate(new Date());
   const pickerRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   const [readings,   setReadings]   = useState([]);
   const [loading,    setLoading]    = useState(true);
@@ -114,7 +115,12 @@ export default function HistoryPage() {
   }, []);
 
   useEffect(() => {
-    const fn = (e) => { if (pickerRef.current && !pickerRef.current.contains(e.target)) setShowPicker(false); };
+    const fn = (e) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target) &&
+          dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowPicker(false);
+      }
+    };
     document.addEventListener('mousedown', fn);
     return () => document.removeEventListener('mousedown', fn);
   }, []);
@@ -209,48 +215,56 @@ ${summary&&summary.totalReadings>0?`<div class="sum-grid"><div class="sum-card">
         </div>
       </div>
 
-      {/* Filters — scrollable on mobile */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 14, overflowX: 'auto', paddingBottom: 4, WebkitOverflowScrolling: 'touch', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+      {/* Filters — scrollable on mobile, with picker outside scroll container */}
+      <div style={{ marginBottom: 14, position: 'relative' }}>
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, WebkitOverflowScrolling: 'touch', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
         <button onClick={() => clickRange('all')}   style={!isCustom && range==='all'   ? fA : fI}>All Time</button>
         <button onClick={() => clickRange('today')} style={!isCustom && range==='today' ? fA : fI}>Today</button>
         {RANGES.slice(1, 5).map(r => (
           <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range===r.value ? fA : fI}>{r.label}</button>
         ))}
 
-        {/* Custom picker */}
-        <div ref={pickerRef} style={{ position: 'relative', flexShrink: 0 }}>
-          <button onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5, paddingRight: isCustom ? 26 : 14 }}>
+        {/* Custom picker button (inside scroll row) */}
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          <button ref={pickerRef} onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5, paddingRight: isCustom ? 26 : 14 }}>
             📅 {isCustom ? activeLabel : 'Custom'}
           </button>
           {isCustom && (
             <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 17, height: 17, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 9, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
           )}
-          {showPicker && (
-            <div style={{ position: 'absolute', top: 'calc(100% + 10px)', left: 0, zIndex: 300, background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', minWidth: 270 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)', marginBottom: 14 }}>📅 Select Date Range</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>From</label>
-                  <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>To</label>
-                  <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ fontSize: 13 }} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 7 }}>Quick Select</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                    {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
-                      <button key={l} onClick={() => quickSelect(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
-                    ))}
-                  </div>
-                </div>
-                <button className="btn btn-primary" onClick={applyCustom} disabled={!customFrom||!customTo} style={{ width: '100%', padding: '10px', fontSize: 13, opacity: (!customFrom||!customTo)?0.4:1 }}>Apply Range</button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Custom date picker dropdown — OUTSIDE the overflow row so it doesn't get clipped */}
+      {showPicker && (
+        <div ref={dropdownRef} style={{ position: 'relative', zIndex: 300, marginBottom: 10 }}>
+          <div style={{ background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', maxWidth: 320 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)' }}>📅 Select Date Range</div>
+              <button onClick={() => setShowPicker(false)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: '0 4px' }}>✕</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>
+                <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>From</label>
+                <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>To</label>
+                <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ fontSize: 13 }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 7 }}>Quick Select</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                  {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
+                    <button key={l} onClick={() => quickSelect(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
+                  ))}
+                </div>
+              </div>
+              <button className="btn btn-primary" onClick={applyCustom} disabled={!customFrom||!customTo} style={{ width: '100%', padding: '10px', fontSize: 13, opacity: (!customFrom||!customTo)?0.4:1 }}>Apply Range</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Summary — 2 cols on mobile, 4 on desktop */}
       {summary && summary.totalReadings > 0 && (

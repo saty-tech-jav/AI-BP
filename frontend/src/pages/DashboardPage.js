@@ -181,28 +181,35 @@ export default function DashboardPage() {
       </div>
 
       {/* Range Filters */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: isMobile ? 12 : 24, alignItems: 'center', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', paddingBottom: 2 }}>
-        <style>{`.filter-scroll::-webkit-scrollbar{display:none}`}</style>
-        {RANGES.slice(0, 5).map(r => (
-          <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range === r.value ? fA : fI}>{r.label}</button>
-        ))}
+      <div style={{ marginBottom: isMobile ? 12 : 24 }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', paddingBottom: 2 }}>
+          <style>{`.filter-scroll::-webkit-scrollbar{display:none}`}</style>
+          {RANGES.slice(0, 5).map(r => (
+            <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range === r.value ? fA : fI}>{r.label}</button>
+          ))}
 
-        {/* Custom — desktop uses dropdown, mobile uses bottom sheet */}
-        <div ref={pickerRef} style={{ position: 'relative', flexShrink: 0 }}>
-          <button
-            onClick={() => setShowPicker(v => !v)}
-            style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5, paddingRight: isCustom ? 24 : 12 }}
-          >
-            📅 {isCustom ? activeLabel : 'Custom'}
-          </button>
-          {isCustom && (
-            <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 8, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
-          )}
+          {/* Custom button */}
+          <div ref={pickerRef} style={{ position: 'relative', flexShrink: 0 }}>
+            <button
+              onClick={() => setShowPicker(v => !v)}
+              style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5, paddingRight: isCustom ? 24 : 12 }}
+            >
+              📅 {isCustom ? activeLabel : 'Custom'}
+            </button>
+            {isCustom && (
+              <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 8, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
+            )}
+          </div>
+        </div>
 
-          {/* DESKTOP dropdown */}
-          {!isMobile && showPicker && (
-            <div style={{ position: 'absolute', top: 'calc(100% + 8px)', left: 0, zIndex: 200, background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.2)', minWidth: 270 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)', marginBottom: 14 }}>📅 Select Date Range</div>
+        {/* DESKTOP dropdown — outside overflow container so it doesn't get clipped */}
+        {!isMobile && showPicker && (
+          <div style={{ position: 'relative', zIndex: 200, marginTop: 8 }}>
+            <div style={{ background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.2)', maxWidth: 300 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)' }}>📅 Select Date Range</div>
+                <button onClick={() => setShowPicker(false)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: '0 4px' }}>✕</button>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
@@ -223,8 +230,8 @@ export default function DashboardPage() {
                 <button className="btn btn-primary" onClick={applyCustom} disabled={!customFrom||!customTo} style={{ width: '100%', padding: '10px', fontSize: 13, opacity: (!customFrom||!customTo)?0.4:1 }}>Apply Range</button>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* MOBILE bottom sheet date picker */}
