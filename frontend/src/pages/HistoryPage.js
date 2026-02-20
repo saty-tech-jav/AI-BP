@@ -18,12 +18,14 @@ const fmtDate = (s) => {
 
 const ITEMS_PER_PAGE = 10;
 
-/* ── Mobile Reading Card — compact ── */
+/* ── MOBILE READING CARD — compact, matching demo ── */
 function MobileCard({ r, idx, onDelete, deleting }) {
   const cs = getCategoryStyle(r.category);
   return (
-    <div style={{ background: 'var(--card)', borderRadius: 12, padding: '9px 11px', marginBottom: 6, border: `1px solid ${r.category === 'Elevated' || r.category?.includes('High') ? 'rgba(245,158,11,0.18)' : 'var(--border)'}` }}>
-      {/* Top: index + time + delete */}
+    <div style={{
+      background: 'var(--card)', borderRadius: 12, padding: '9px 11px',
+      marginBottom: 6, border: '1px solid var(--border)',
+    }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
           <div style={{ width: 19, height: 19, borderRadius: '50%', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: 'var(--text3)', flexShrink: 0 }}>{idx}</div>
@@ -34,8 +36,6 @@ function MobileCard({ r, idx, onDelete, deleting }) {
           {deleting === r.id ? '…' : '🗑️'}
         </button>
       </div>
-
-      {/* BP values — compact inner bg */}
       <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg3)', borderRadius: 9, padding: '7px 9px', marginBottom: 7 }}>
         <div style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 1 }}>SYS</div>
@@ -59,8 +59,6 @@ function MobileCard({ r, idx, onDelete, deleting }) {
           </>
         )}
       </div>
-
-      {/* Bottom: badge + type */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ padding: '3px 9px', borderRadius: 6, background: cs.bg, border: `1px solid ${cs.border}`, color: cs.color, fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700 }}>
           {r.category}
@@ -78,51 +76,45 @@ function MobileCard({ r, idx, onDelete, deleting }) {
   );
 }
 
-/* ── Mobile Date Picker Bottom Sheet ── */
+/* ── MOBILE BOTTOM SHEET DATE PICKER ── */
 function MobileDateModal({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, onQuickApply }) {
   if (!show) return null;
-  const fmtDisplay = (s) => {
-    if (!s) return '—';
-    const [y, m, d] = s.split('-');
-    return new Date(+y, +m - 1, +d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-  };
+  const fmtD = (s) => { if (!s) return '—'; const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN',{day:'numeric',month:'short'}); };
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 1000, backdropFilter: 'blur(4px)' }} />
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', boxShadow: '0 -8px 40px rgba(0,0,0,0.5)', maxHeight: '88vh', overflowY: 'auto' }}>
-        <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '12px auto 0' }} />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px 0' }}>
+        <div style={{ width: 38, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '12px auto 0' }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px 0' }}>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, color: 'var(--text)' }}>📅 Date Range</div>
-          <button onClick={onClose} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text3)', fontSize: 15 }}>✕</button>
+          <button onClick={onClose} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text3)', fontSize: 15, fontFamily: 'inherit' }}>✕</button>
         </div>
-        <div style={{ padding: '16px 18px max(env(safe-area-inset-bottom, 20px), 20px)' }}>
+        <div style={{ padding: '14px 18px max(env(safe-area-inset-bottom, 22px), 22px)' }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Quick Select</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 20 }}>
             {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90},{l:'6 Months',d:180}].map(({l,d}) => (
               <button key={l} onClick={() => onQuickApply(d)} style={{ padding: '10px 6px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer', textAlign: 'center' }}>{l}</button>
             ))}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
             <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
             <div style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Or pick dates</div>
             <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
           </div>
-          <div style={{ marginBottom: 6 }}>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
-            <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px', marginBottom: 12 }} />
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
-            <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px' }} />
-          </div>
+          <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
+          <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px', marginBottom: 12 }} />
+          <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
+          <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px' }} />
           {customFrom && customTo && (
             <div style={{ display: 'flex', alignItems: 'center', background: 'var(--card)', borderRadius: 10, padding: '10px 14px', margin: '14px 0', gap: 8 }}>
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>From</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtDisplay(customFrom)}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtD(customFrom)}</div>
               </div>
               <div style={{ color: 'var(--text3)', fontSize: 14 }}>→</div>
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>To</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtDisplay(customTo)}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtD(customTo)}</div>
               </div>
             </div>
           )}
@@ -202,16 +194,15 @@ export default function HistoryPage() {
   const applyCustom = () => { if (customFrom && customTo) { setIsCustom(true); setShowPicker(false); } };
   const clearCustom = (e) => { e.stopPropagation(); setIsCustom(false); setRange('today'); setCustomFrom(todayStr); setCustomTo(todayStr); };
   const clickRange = (v) => { setRange(v); setIsCustom(false); setShowPicker(false); };
-  const quickSelect = (days) => {
+
+  // FIXED: single quickApply — sets dates AND applies immediately, works for web chips + mobile grid
+  const quickApply = (days) => {
     const to = new Date(), from = new Date();
     if (days > 0) from.setDate(from.getDate() - days);
-    setCustomFrom(toInputDate(from)); setCustomTo(toInputDate(to));
-  };
-  const quickApplyMobile = (days) => {
-    const to = new Date(), from = new Date();
-    if (days > 0) from.setDate(from.getDate() - days);
-    setCustomFrom(toInputDate(from)); setCustomTo(toInputDate(to));
-    setIsCustom(true); setShowPicker(false);
+    setCustomFrom(toInputDate(from));
+    setCustomTo(toInputDate(to));
+    setIsCustom(true);
+    setShowPicker(false);
   };
 
   const activeLabel = isCustom
@@ -252,14 +243,13 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      {/* Filter bar — fully scrollable, Custom picker inside */}
+      {/* Filter bar */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 14, overflowX: 'auto', paddingBottom: 6, WebkitOverflowScrolling: 'touch', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
         <button onClick={() => clickRange('all')} style={!isCustom && range === 'all' ? fA : fI}>All Time</button>
         <button onClick={() => clickRange('today')} style={!isCustom && range === 'today' ? fA : fI}>Today</button>
         {RANGES.slice(1, 5).map(r => (
           <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range === r.value ? fA : fI}>{r.label}</button>
         ))}
-        {/* Custom picker button */}
         <div ref={pickerRef} style={{ position: 'relative', flexShrink: 0 }}>
           <button onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5 }}>
             📅 {isCustom ? activeLabel : 'Custom'}
@@ -267,7 +257,7 @@ export default function HistoryPage() {
           {isCustom && (
             <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 17, height: 17, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 9, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
           )}
-          {/* Desktop dropdown only */}
+          {/* WEB desktop dropdown only */}
           {!isMobile && showPicker && (
             <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 300, background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', width: 290 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -277,15 +267,16 @@ export default function HistoryPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>From</label>
-                  <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
+                  <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
                 </div>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>To</label>
                   <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ fontSize: 13 }} />
                 </div>
+                {/* FIXED: chips call quickApply — immediately applies */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                   {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
-                    <button key={l} onClick={() => quickApplyMobile(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
+                    <button key={l} onClick={() => quickApply(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
                   ))}
                 </div>
                 <button className="btn btn-primary" onClick={applyCustom} style={{ width: '100%', padding: '10px', fontSize: 13 }}>Apply Range</button>
@@ -306,13 +297,14 @@ export default function HistoryPage() {
           setCustomTo={setCustomTo}
           todayStr={todayStr}
           onApply={applyCustom}
-          onQuickApply={quickApplyMobile}
+          onQuickApply={quickApply}
         />
       )}
 
-      {/* Summary strip */}
+      {/* SUMMARY STRIP */}
       {summary && summary.totalReadings > 0 && (
         isMobile ? (
+          /* MOBILE: 3-column compact strip */
           <div style={{ display: 'flex', gap: 7, marginBottom: 11 }}>
             <div className="card" style={{ flex: 1.7, padding: '9px 10px' }}>
               <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 3 }}>Avg BP</div>
@@ -321,7 +313,7 @@ export default function HistoryPage() {
             </div>
             <div className="card" style={{ flex: 1, padding: '9px 10px' }}>
               <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 3 }}>Status</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: getCategoryStyle(summary.category).color || 'var(--text)' }}>{summary.category}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: getCategoryStyle(summary.category).color || 'var(--text)', marginTop: 2 }}>{summary.category}</div>
             </div>
             <div className="card" style={{ flex: 0.65, padding: '9px 10px' }}>
               <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 3 }}>Total</div>
@@ -329,7 +321,8 @@ export default function HistoryPage() {
             </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14, overflowX: 'auto', paddingBottom: 2 }}>
+          /* WEB: full 4-column strip */
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
             {[
               { label: 'Avg BP', value: `${summary.avgSystolic}/${summary.avgDiastolic}`, unit: 'mmHg' },
               { label: 'Avg Pulse', value: summary.avgPulse > 0 ? summary.avgPulse : '—', unit: summary.avgPulse > 0 ? 'bpm' : '' },

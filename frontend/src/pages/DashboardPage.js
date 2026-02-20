@@ -50,56 +50,45 @@ const fmtDate = (s) => {
   return new Date(+y, +m - 1, +d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 };
 
-const MobileDateModal = ({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, quickSelect, onQuickApply }) => {
+/* ── Mobile bottom sheet date picker ── */
+const MobileDateModal = ({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, onQuickApply }) => {
   if (!show) return null;
-  const fmtDisplay = (s) => {
-    if (!s) return '—';
-    const [y, m, d] = s.split('-');
-    return new Date(+y, +m - 1, +d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-  };
+  const fmtD = (s) => { if (!s) return '—'; const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN',{day:'numeric',month:'short'}); };
   return (
     <>
       <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 1000, backdropFilter: 'blur(4px)' }} />
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', boxShadow: '0 -8px 40px rgba(0,0,0,0.5)', maxHeight: '88vh', overflowY: 'auto' }}>
-        {/* Handle */}
-        <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '12px auto 0' }} />
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px 0' }}>
+        <div style={{ width: 38, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '12px auto 0' }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px 0' }}>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, color: 'var(--text)' }}>📅 Date Range</div>
-          <button onClick={onClose} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text3)', fontSize: 15 }}>✕</button>
+          <button onClick={onClose} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text3)', fontSize: 15, fontFamily: 'inherit' }}>✕</button>
         </div>
-        <div style={{ padding: '16px 18px max(env(safe-area-inset-bottom, 20px), 20px)' }}>
-          {/* Quick select grid — 3 cols, thumb-friendly */}
+        <div style={{ padding: '14px 18px max(env(safe-area-inset-bottom, 22px), 22px)' }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Quick Select</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 20 }}>
             {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90},{l:'6 Months',d:180}].map(({l,d}) => (
               <button key={l} onClick={() => onQuickApply(d)} style={{ padding: '10px 6px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer', textAlign: 'center' }}>{l}</button>
             ))}
           </div>
-          {/* Divider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
             <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
             <div style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Or pick dates</div>
             <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
           </div>
-          {/* Stacked date inputs — vertical, not side by side */}
-          <div style={{ marginBottom: 6 }}>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
-            <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px', marginBottom: 12 }} />
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
-            <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px' }} />
-          </div>
-          {/* Range preview */}
+          <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
+          <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px', marginBottom: 12 }} />
+          <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
+          <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px' }} />
           {customFrom && customTo && (
             <div style={{ display: 'flex', alignItems: 'center', background: 'var(--card)', borderRadius: 10, padding: '10px 14px', margin: '14px 0', gap: 8 }}>
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>From</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtDisplay(customFrom)}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtD(customFrom)}</div>
               </div>
               <div style={{ color: 'var(--text3)', fontSize: 14 }}>→</div>
               <div style={{ flex: 1, textAlign: 'center' }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>To</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtDisplay(customTo)}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtD(customTo)}</div>
               </div>
             </div>
           )}
@@ -175,18 +164,16 @@ export default function DashboardPage() {
     setIsCustom(false); setRange('today'); setCustomFrom(todayStr); setCustomTo(todayStr);
   };
   const clickRange = (v) => { setRange(v); setIsCustom(false); setShowPicker(false); };
-  const quickSelect = (days) => {
+
+  // Single quickApply used by BOTH web dropdown chips AND mobile grid
+  // Sets dates and immediately applies — no extra button press needed
+  const quickApply = (days) => {
     const to = new Date(), from = new Date();
     if (days > 0) from.setDate(from.getDate() - days);
-    setCustomFrom(toInputDate(from)); setCustomTo(toInputDate(to));
-  };
-  const quickApplyMobile = (days) => {
-    const to = new Date(), from = new Date();
-    if (days > 0) from.setDate(from.getDate() - days);
-    const fromStr = toInputDate(from), toStr = toInputDate(to);
-    setCustomFrom(fromStr); setCustomTo(toStr);
-    // Apply immediately
-    setIsCustom(true); setShowPicker(false);
+    setCustomFrom(toInputDate(from));
+    setCustomTo(toInputDate(to));
+    setIsCustom(true);
+    setShowPicker(false);
   };
 
   const catStyle = summary ? getCategoryStyle(summary.category) : {};
@@ -214,7 +201,7 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Filter bar — fully scrollable single row */}
+      {/* Filter bar */}
       <div style={{ display: 'flex', gap: 8, marginBottom: isMobile ? 14 : 24, overflowX: 'auto', paddingBottom: 6, WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {RANGES.slice(0, 5).map(r => (
           <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range === r.value ? fA : fI}>{r.label}</button>
@@ -226,6 +213,7 @@ export default function DashboardPage() {
           {isCustom && (
             <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 8, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
           )}
+          {/* WEB desktop dropdown only */}
           {!isMobile && showPicker && (
             <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 300, background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', width: 290 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -235,15 +223,16 @@ export default function DashboardPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
-                  <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
+                  <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
                 </div>
                 <div>
                   <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
                   <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ fontSize: 13 }} />
                 </div>
+                {/* FIXED: chips call quickApply — immediately applies, no extra button needed */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                   {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'90 Days',d:90}].map(({l,d}) => (
-                    <button key={l} onClick={() => quickApplyMobile(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
+                    <button key={l} onClick={() => quickApply(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
                   ))}
                 </div>
                 <button className="btn btn-primary" onClick={applyCustom} style={{ width: '100%', padding: '10px', fontSize: 13 }}>Apply Range</button>
@@ -264,8 +253,7 @@ export default function DashboardPage() {
           setCustomTo={setCustomTo}
           todayStr={todayStr}
           onApply={applyCustom}
-          quickSelect={quickSelect}
-          onQuickApply={quickApplyMobile}
+          onQuickApply={quickApply}
         />
       )}
 
@@ -276,9 +264,10 @@ export default function DashboardPage() {
 
           {latestReading && (
             isMobile ? (
+              /* MOBILE: compact card with inner bg panel */
               <div className="card" style={{ padding: '14px' }}>
                 <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 10 }}>Latest Reading</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 12, background: 'rgba(255,255,255,0.04)', borderRadius: 12, padding: '11px 10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.04)', borderRadius: 11, padding: '11px 10px', marginBottom: 11 }}>
                   <div style={{ flex: 1, textAlign: 'center' }}>
                     <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>SYS</div>
                     <span style={{ fontSize: 42, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--val-sys)', lineHeight: 1, letterSpacing: '-0.04em' }}>{latestReading.systolic}</span>
@@ -309,6 +298,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : (
+              /* WEB: unchanged large card */
               <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 16 }}>
                 <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 28, padding: '26px 28px' }}>
                   <div>
