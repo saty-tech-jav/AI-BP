@@ -3,124 +3,88 @@ import { readingsAPI } from '../services/api';
 import { getCategoryStyle, RANGES } from '../utils/helpers';
 import { useNavigate } from 'react-router-dom';
 
-const toInputDate = (d) => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
-
-const fmtDate = (s) => {
-  if (!s) return '';
-  const [y, m, d] = s.split('-');
-  return new Date(+y, +m - 1, +d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-};
-
+const toInputDate = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const fmtDate = (s) => { if (!s) return ''; const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); };
 const ITEMS_PER_PAGE = 10;
 
-/* ── MOBILE READING CARD — compact, matching demo ── */
 function MobileCard({ r, idx, onDelete, deleting }) {
   const cs = getCategoryStyle(r.category);
   return (
-    <div style={{
-      background: 'var(--card)', borderRadius: 12, padding: '9px 11px',
-      marginBottom: 6, border: '1px solid var(--border)',
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <div style={{ width: 19, height: 19, borderRadius: '50%', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: 'var(--text3)', flexShrink: 0 }}>{idx}</div>
-          <span style={{ fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--font-mono)' }}>{r.recordedAt}</span>
+    <div style={{ background:'var(--card)', borderRadius:14, padding:'16px 14px', marginBottom:10, border:'1px solid var(--card-border)' }}>
+      {/* Top row */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <div style={{ width:22, height:22, borderRadius:'50%', background:'var(--bg3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:700, color:'var(--text3)', flexShrink:0 }}>{idx}</div>
+          <span style={{ fontSize:12, color:'var(--text3)', fontFamily:'var(--mono)' }}>{r.recordedAt}</span>
         </div>
-        <button onClick={() => onDelete(r.id)} disabled={deleting === r.id}
-          style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, padding: '3px 7px', cursor: 'pointer', fontSize: 12, color: '#ef4444', lineHeight: 1 }}>
-          {deleting === r.id ? '…' : '🗑️'}
+        <button onClick={() => onDelete(r.id)} disabled={deleting===r.id}
+          style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:8, padding:'6px 12px', cursor:'pointer', fontSize:13, color:'#ef4444', minHeight:36 }}>
+          {deleting===r.id ? '…' : '🗑️'}
         </button>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg3)', borderRadius: 9, padding: '7px 9px', marginBottom: 7 }}>
-        <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 1 }}>SYS</div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1 }}>{r.systolic}</div>
-          <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>mmHg</div>
+
+      {/* Big numbers */}
+      <div style={{ display:'flex', alignItems:'center', background:'var(--bg3)', borderRadius:12, padding:'14px 10px', marginBottom:12, gap:4 }}>
+        <div style={{ flex:1, textAlign:'center' }}>
+          <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>SYS</div>
+          <div style={{ fontSize:36, fontWeight:800, color:'var(--val-sys)', lineHeight:1, letterSpacing:'-0.03em' }}>{r.systolic}</div>
+          <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>mmHg</div>
         </div>
-        <div style={{ color: 'var(--text3)', fontSize: 14, fontWeight: 200, padding: '0 2px' }}>/</div>
-        <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 1 }}>DIA</div>
-          <div style={{ fontSize: 22, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent2)', lineHeight: 1 }}>{r.diastolic}</div>
-          <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>mmHg</div>
+        <div style={{ color:'var(--text3)', fontSize:20, fontWeight:200, padding:'0 4px' }}>/</div>
+        <div style={{ flex:1, textAlign:'center' }}>
+          <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>DIA</div>
+          <div style={{ fontSize:36, fontWeight:800, color:'var(--val-dia)', lineHeight:1, letterSpacing:'-0.03em' }}>{r.diastolic}</div>
+          <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>mmHg</div>
         </div>
         {r.pulse && (
           <>
-            <div style={{ width: 1, height: 32, background: 'var(--border)', margin: '0 5px' }} />
-            <div style={{ flex: 1, textAlign: 'center' }}>
-              <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 1 }}>PULSE</div>
-              <div style={{ fontSize: 19, fontFamily: 'var(--font-display)', fontWeight: 800, color: '#a855f7', lineHeight: 1 }}>{r.pulse}</div>
-              <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>bpm</div>
+            <div style={{ width:1, height:44, background:'var(--border)', flexShrink:0, margin:'0 4px' }} />
+            <div style={{ flex:0.85, textAlign:'center' }}>
+              <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>PULSE</div>
+              <div style={{ fontSize:28, fontWeight:800, color:'var(--val-pulse)', lineHeight:1 }}>{r.pulse}</div>
+              <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>bpm</div>
             </div>
           </>
         )}
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ padding: '3px 9px', borderRadius: 6, background: cs.bg, border: `1px solid ${cs.border}`, color: cs.color, fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700 }}>
-          {r.category}
-        </span>
-        <span style={{ fontSize: 10, color: 'var(--text3)', background: 'var(--bg3)', padding: '3px 7px', borderRadius: 5 }}>
-          {r.readingType === 'VOICE' ? '🎙️' : r.readingType === 'TEXT' ? '💬' : '✍️'} {r.readingType || 'MANUAL'}
+
+      {/* Bottom row */}
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <span style={{ padding:'5px 12px', borderRadius:7, background:cs.bg, border:`1px solid ${cs.border}`, color:cs.color, fontSize:11, fontWeight:700 }}>{r.category}</span>
+        <span style={{ fontSize:11, color:'var(--text3)', background:'var(--bg3)', padding:'4px 10px', borderRadius:6 }}>
+          {r.readingType==='VOICE'?'🎙️':r.readingType==='TEXT'?'💬':'✍️'} {r.readingType||'MANUAL'}
         </span>
       </div>
       {r.notes && (
-        <div style={{ marginTop: 7, fontSize: 11, color: 'var(--text3)', fontStyle: 'italic', paddingTop: 7, borderTop: '1px solid var(--border)' }}>
-          📝 {r.notes}
-        </div>
+        <div style={{ marginTop:10, fontSize:12, color:'var(--text3)', fontStyle:'italic', paddingTop:10, borderTop:'1px solid var(--border)' }}>📝 {r.notes}</div>
       )}
     </div>
   );
 }
 
-/* ── MOBILE BOTTOM SHEET DATE PICKER ── */
-function MobileDateModal({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, onQuickApply }) {
+function DateSheet({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, onQuick }) {
   if (!show) return null;
-  const fmtD = (s) => { if (!s) return '—'; const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN',{day:'numeric',month:'short'}); };
   return (
     <>
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 1000, backdropFilter: 'blur(4px)' }} />
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', boxShadow: '0 -8px 40px rgba(0,0,0,0.5)', maxHeight: '88vh', overflowY: 'auto' }}>
-        <div style={{ width: 38, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '12px auto 0' }} />
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px 0' }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, color: 'var(--text)' }}>📅 Date Range</div>
-          <button onClick={onClose} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text3)', fontSize: 15, fontFamily: 'inherit' }}>✕</button>
+      <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:1000, backdropFilter:'blur(4px)' }} />
+      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:1001, background:'var(--bg2)', borderRadius:'24px 24px 0 0', maxHeight:'90vh', overflowY:'auto', animation:'slideUp 0.3s cubic-bezier(0.22,1,0.36,1)' }}>
+        <div style={{ width:40, height:4, borderRadius:2, background:'var(--border-strong)', margin:'14px auto 0' }} />
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 20px 0' }}>
+          <span style={{ fontWeight:800, fontSize:17, color:'var(--text)' }}>📅 Date Range</span>
+          <button onClick={onClose} style={{ width:32, height:32, borderRadius:8, border:'1px solid var(--border)', background:'var(--bg3)', color:'var(--text3)', cursor:'pointer', fontSize:16, display:'flex', alignItems:'center', justifyContent:'center' }}>✕</button>
         </div>
-        <div style={{ padding: '14px 18px max(env(safe-area-inset-bottom, 22px), 22px)' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Quick Select</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 20 }}>
-            {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90},{l:'6 Months',d:180}].map(({l,d}) => (
-              <button key={l} onClick={() => onQuickApply(d)} style={{ padding: '10px 6px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer', textAlign: 'center' }}>{l}</button>
+        <div style={{ padding:'20px 20px calc(env(safe-area-inset-bottom, 24px) + 24px)' }}>
+          <div style={{ fontSize:11, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:12 }}>Quick Select</div>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10, marginBottom:24 }}>
+            {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'30 Days',d:30},{l:'90 Days',d:90},{l:'6 Months',d:180},{l:'1 Year',d:365}].map(({l,d}) => (
+              <button key={l} onClick={() => onQuick(d)} style={{ padding:'14px 8px', borderRadius:12, border:'1.5px solid var(--border)', background:'var(--card)', color:'var(--text2)', fontSize:13, fontWeight:600, cursor:'pointer', minHeight:50 }}>{l}</button>
             ))}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-            <div style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Or pick dates</div>
-            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-          </div>
-          <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
-          <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px', marginBottom: 12 }} />
-          <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
-          <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px' }} />
-          {customFrom && customTo && (
-            <div style={{ display: 'flex', alignItems: 'center', background: 'var(--card)', borderRadius: 10, padding: '10px 14px', margin: '14px 0', gap: 8 }}>
-              <div style={{ flex: 1, textAlign: 'center' }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>From</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtD(customFrom)}</div>
-              </div>
-              <div style={{ color: 'var(--text3)', fontSize: 14 }}>→</div>
-              <div style={{ flex: 1, textAlign: 'center' }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>To</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtD(customTo)}</div>
-              </div>
-            </div>
-          )}
-          <button className="btn btn-primary" onClick={onApply} disabled={!customFrom || !customTo} style={{ width: '100%', padding: '14px', fontSize: 15, opacity: (!customFrom || !customTo) ? 0.4 : 1, marginTop: 4 }}>
-            Apply Range
-          </button>
+          <label style={{ display:'block', fontSize:12, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>From</label>
+          <input type="date" className="input" value={customFrom} max={customTo||todayStr} onChange={e=>setCustomFrom(e.target.value)} style={{ marginBottom:14 }} />
+          <label style={{ display:'block', fontSize:12, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>To</label>
+          <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e=>setCustomTo(e.target.value)} style={{ marginBottom:20 }} />
+          <button className="btn btn-primary" onClick={onApply} disabled={!customFrom||!customTo} style={{ width:'100%', opacity:(!customFrom||!customTo)?0.4:1 }}>Apply Range</button>
         </div>
       </div>
     </>
@@ -131,7 +95,6 @@ export default function HistoryPage() {
   const navigate = useNavigate();
   const todayStr = toInputDate(new Date());
   const pickerRef = useRef(null);
-
   const [readings, setReadings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState('today');
@@ -162,22 +125,16 @@ export default function HistoryPage() {
     try {
       let readRes, sumRes;
       if (isCustom) {
-        [readRes, sumRes] = await Promise.all([
-          readingsAPI.getByCustomRange(customFrom, customTo),
-          readingsAPI.getSummaryCustom(customFrom, customTo),
-        ]);
-      } else if (range === 'all') {
+        [readRes, sumRes] = await Promise.all([readingsAPI.getByCustomRange(customFrom,customTo), readingsAPI.getSummaryCustom(customFrom,customTo)]);
+      } else if (range==='all') {
         [readRes, sumRes] = await Promise.all([readingsAPI.getAll(), readingsAPI.getSummary('all')]);
       } else {
         [readRes, sumRes] = await Promise.all([readingsAPI.getByRange(range), readingsAPI.getSummary(range)]);
       }
-      let data = readRes.data || [];
-      if (range === 'today' && !isCustom) {
-        data = data.filter(r => (r.recordedAt || '').slice(0, 10) === todayStr);
-      }
-      setReadings(data);
-      setSummary(sumRes.data);
-    } catch (e) { console.error(e); setReadings([]); }
+      let data = readRes.data||[];
+      if (range==='today'&&!isCustom) data = data.filter(r=>(r.recordedAt||'').slice(0,10)===todayStr);
+      setReadings(data); setSummary(sumRes.data);
+    } catch(e) { console.error(e); setReadings([]); }
     finally { setLoading(false); }
   };
 
@@ -186,206 +143,153 @@ export default function HistoryPage() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this reading?')) return;
     setDeleting(id);
-    try { await readingsAPI.delete(id); setReadings(r => r.filter(x => x.id !== id)); }
-    catch (e) { alert('Failed to delete'); }
+    try { await readingsAPI.delete(id); setReadings(r=>r.filter(x=>x.id!==id)); }
+    catch(e) { alert('Failed to delete'); }
     finally { setDeleting(null); }
   };
 
-  const applyCustom = () => { if (customFrom && customTo) { setIsCustom(true); setShowPicker(false); } };
+  const applyCustom = () => { if (customFrom&&customTo) { setIsCustom(true); setShowPicker(false); } };
   const clearCustom = (e) => { e.stopPropagation(); setIsCustom(false); setRange('today'); setCustomFrom(todayStr); setCustomTo(todayStr); };
   const clickRange = (v) => { setRange(v); setIsCustom(false); setShowPicker(false); };
-
-  // FIXED: single quickApply — sets dates AND applies immediately, works for web chips + mobile grid
   const quickApply = (days) => {
-    const to = new Date(), from = new Date();
-    if (days > 0) from.setDate(from.getDate() - days);
-    setCustomFrom(toInputDate(from));
-    setCustomTo(toInputDate(to));
-    setIsCustom(true);
-    setShowPicker(false);
+    const to=new Date(), from=new Date();
+    if (days>0) from.setDate(from.getDate()-days);
+    setCustomFrom(toInputDate(from)); setCustomTo(toInputDate(to));
+    setIsCustom(true); setShowPicker(false);
   };
 
   const activeLabel = isCustom
-    ? (customFrom === customTo ? fmtDate(customFrom) : `${fmtDate(customFrom)} – ${fmtDate(customTo)}`)
-    : (range === 'all' ? 'All Time' : RANGES.find(r => r.value === range)?.label);
+    ? (customFrom===customTo ? fmtDate(customFrom) : `${fmtDate(customFrom)} – ${fmtDate(customTo)}`)
+    : (range==='all'?'All Time':RANGES.find(r=>r.value===range)?.label);
 
-  const totalPages = Math.ceil(readings.length / ITEMS_PER_PAGE);
-  const paginated = readings.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(readings.length/ITEMS_PER_PAGE);
+  const paginated = readings.slice((page-1)*ITEMS_PER_PAGE, page*ITEMS_PER_PAGE);
 
-  const exportReport = () => {
-    const now = new Date().toLocaleString('en-IN');
-    const catColor = (cat) => ({ Normal:'#10b981', Elevated:'#f59e0b', 'High BP Stage 1':'#f97316', 'High BP Stage 2':'#ef4444', 'Hypertensive Crisis':'#dc2626' }[cat] || '#64748b');
-    const rows = readings.map((r, i) => `<tr class="${i%2===0?'even':'odd'}"><td class="center num">${i+1}</td><td>${r.recordedAt||'—'}</td><td class="center"><strong style="color:#3b82f6">${r.systolic}</strong> <span class="unit">mmHg</span></td><td class="center"><strong style="color:#06b6d4">${r.diastolic}</strong> <span class="unit">mmHg</span></td><td class="center">${r.pulse?`<strong style="color:#a855f7">${r.pulse}</strong> <span class="unit">bpm</span>`:'—'}</td><td class="center"><span class="badge" style="background:${catColor(r.category)}18;color:${catColor(r.category)};border:1.5px solid ${catColor(r.category)}55">${r.category}</span></td><td>${r.notes||'—'}</td></tr>`).join('');
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>VitalsSaathi — ${activeLabel}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:sans-serif;background:#f1f5f9;}.page{max-width:960px;margin:0 auto;padding:32px 24px;}.header{background:linear-gradient(135deg,#0f172a,#1d4ed8);border-radius:18px;padding:28px 32px;margin-bottom:18px;color:#fff;display:flex;justify-content:space-between;align-items:center;}.logo-name{font-size:21px;font-weight:800;}.logo-name span{color:#ff6b6b;}.rperiod{font-size:19px;font-weight:800;}.rmeta{font-size:11px;opacity:.5;margin-top:4px;}table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;}th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;background:#f8fafc;}td{padding:10px 12px;font-size:13px;color:#374151;}.center{text-align:center;}.even{background:#fff;}.odd{background:#f9fafb;}tr:not(:last-child) td{border-bottom:1px solid #f1f5f9;}.unit{font-size:10px;color:#94a3b8;}.badge{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;}.num{color:#94a3b8;font-size:11px;}.footer{margin-top:16px;text-align:right;font-size:11px;color:#94a3b8;}</style></head><body><div class="page"><div class="header"><div><div class="logo-name">VitalsSaathi<span>.AI</span></div><div style="font-size:9px;opacity:.4;text-transform:uppercase;letter-spacing:.15em;margin-top:4px">Blood Pressure Monitor</div></div><div style="text-align:right"><div class="rperiod">${activeLabel}</div><div class="rmeta">Generated: ${now}</div></div></div><table><thead><tr><th class="center">#</th><th>Date &amp; Time</th><th class="center">Systolic</th><th class="center">Diastolic</th><th class="center">Pulse</th><th class="center">Category</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table><div class="footer">⚕️ For personal tracking only. Consult a doctor for medical advice.</div></div><script>window.onload=()=>window.print();</script></body></html>`;
-    window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
-  };
-
-  const fA = { padding: '8px 15px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, border: 'none', background: 'var(--btn-primary-bg)', color: '#fff', boxShadow: 'var(--btn-primary-shadow)', whiteSpace: 'nowrap', flexShrink: 0 };
-  const fI = { padding: '8px 15px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', whiteSpace: 'nowrap', flexShrink: 0 };
+  const fA = { padding:'9px 18px', borderRadius:99, cursor:'pointer', fontWeight:700, fontSize:13, border:'none', background:'var(--btn-bg)', color:'#fff', boxShadow:'var(--btn-shadow)', whiteSpace:'nowrap', flexShrink:0, minHeight:42 };
+  const fI = { padding:'9px 18px', borderRadius:99, cursor:'pointer', fontWeight:600, fontSize:13, border:'1.5px solid var(--border)', background:'var(--card)', color:'var(--text2)', whiteSpace:'nowrap', flexShrink:0, minHeight:42 };
 
   return (
     <div className="fade-in">
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14, gap: 10 }}>
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom: isMobile ? 18 : 22, gap:10 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? 22 : 28, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em' }}>Reading History</h1>
-          <p style={{ color: 'var(--text3)', marginTop: 3, fontSize: 13 }}>
-            {readings.length} reading{readings.length !== 1 ? 's' : ''}
-            {activeLabel && <span style={{ marginLeft: 6, color: 'var(--accent)', fontWeight: 600 }}>· {activeLabel}</span>}
+          <h1 style={{ fontWeight:800, fontSize: isMobile ? 26 : 30, color:'var(--text)', letterSpacing:'-0.02em' }}>History</h1>
+          <p style={{ color:'var(--text3)', marginTop:3, fontSize:13 }}>
+            {readings.length} reading{readings.length!==1?'s':''}
+            {activeLabel && <span style={{ marginLeft:6, color:'var(--accent)', fontWeight:600 }}>· {activeLabel}</span>}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-          <button onClick={exportReport} style={{ padding: '9px 12px', borderRadius: 10, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 5 }}>
-            📄{!isMobile && ' Export'}
-          </button>
-          <button className="btn btn-primary" onClick={() => navigate('/log')} style={{ fontSize: 12, padding: '9px 13px' }}>+ Log</button>
+        <div style={{ display:'flex', gap:8, flexShrink:0, alignItems:'center' }}>
+          <button className="btn btn-ghost btn-sm" onClick={() => {
+            /* export function from original */
+            const catColor=(cat)=>({Normal:'#10b981',Elevated:'#f59e0b','High BP Stage 1':'#f97316','High BP Stage 2':'#ef4444','Hypertensive Crisis':'#dc2626'}[cat]||'#64748b');
+            const rows=readings.map((r,i)=>`<tr class="${i%2===0?'even':'odd'}"><td class="center num">${i+1}</td><td>${r.recordedAt||'—'}</td><td class="center"><strong style="color:#3b82f6">${r.systolic}</strong></td><td class="center"><strong style="color:#06b6d4">${r.diastolic}</strong></td><td class="center">${r.pulse||'—'}</td><td class="center"><span class="badge" style="background:${catColor(r.category)}18;color:${catColor(r.category)}">${r.category}</span></td><td>${r.notes||'—'}</td></tr>`).join('');
+            const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>VitalsSaathi Report</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:sans-serif;background:#f1f5f9;padding:32px;}table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;}th,td{padding:10px 14px;text-align:left;font-size:13px;}th{background:#f8fafc;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;}.center{text-align:center;}.even{background:#fff;}.odd{background:#f9fafb;}.num{color:#94a3b8;font-size:11px;}.badge{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;}</style></head><body><h2 style="margin-bottom:20px;font-family:sans-serif">VitalsSaathi — ${activeLabel}</h2><table><thead><tr><th class="center">#</th><th>Date & Time</th><th class="center">Sys</th><th class="center">Dia</th><th class="center">Pulse</th><th class="center">Category</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>window.print();</script></body></html>`;
+            window.open(URL.createObjectURL(new Blob([html],{type:'text/html'})),'_blank');
+          }} style={{ fontSize:13 }}>📄{!isMobile&&' Export'}</button>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate('/log')}>+ Log</button>
         </div>
       </div>
 
       {/* Filter bar */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 14, overflowX: 'auto', paddingBottom: 6, WebkitOverflowScrolling: 'touch', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-        <button onClick={() => clickRange('all')} style={!isCustom && range === 'all' ? fA : fI}>All Time</button>
-        <button onClick={() => clickRange('today')} style={!isCustom && range === 'today' ? fA : fI}>Today</button>
-        {RANGES.slice(1, 5).map(r => (
-          <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range === r.value ? fA : fI}>{r.label}</button>
+      <div style={{ display:'flex', gap:8, marginBottom: isMobile ? 16 : 18, overflowX:'auto', paddingBottom:4, WebkitOverflowScrolling:'touch', msOverflowStyle:'none', scrollbarWidth:'none' }}>
+        <button onClick={()=>clickRange('all')} style={!isCustom&&range==='all'?fA:fI}>All</button>
+        <button onClick={()=>clickRange('today')} style={!isCustom&&range==='today'?fA:fI}>Today</button>
+        {RANGES.slice(1,5).map(r=>(
+          <button key={r.value} onClick={()=>clickRange(r.value)} style={!isCustom&&range===r.value?fA:fI}>{r.label}</button>
         ))}
-        <div ref={pickerRef} style={{ position: 'relative', flexShrink: 0 }}>
-          <button onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5 }}>
-            📅 {isCustom ? activeLabel : 'Custom'}
+        <div ref={pickerRef} style={{ position:'relative', flexShrink:0 }}>
+          <button onClick={()=>setShowPicker(v=>!v)} style={{ ...(isCustom?fA:fI), display:'flex', alignItems:'center', gap:5 }}>
+            📅 {isCustom?activeLabel:'Custom'}
           </button>
           {isCustom && (
-            <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 17, height: 17, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 9, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
+            <button onClick={clearCustom} style={{ position:'absolute', top:-6, right:-6, width:18, height:18, borderRadius:'50%', background:'#ef4444', border:'2px solid var(--bg)', color:'#fff', fontSize:8, cursor:'pointer', fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', zIndex:2, lineHeight:1 }}>✕</button>
           )}
-          {/* WEB desktop dropdown only */}
           {!isMobile && showPicker && (
-            <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 300, background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', width: 290 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)' }}>📅 Select Date Range</div>
-                <button onClick={() => setShowPicker(false)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>✕</button>
+            <div style={{ position:'absolute', top:'calc(100% + 10px)', right:0, zIndex:300, background:'var(--bg2)', border:'1px solid var(--border-strong)', borderRadius:16, padding:20, boxShadow:'0 16px 48px rgba(0,0,0,0.3)', width:300 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+                <span style={{ fontWeight:800, fontSize:14, color:'var(--text)' }}>📅 Date Range</span>
+                <button onClick={()=>setShowPicker(false)} style={{ background:'none', border:'none', color:'var(--text3)', cursor:'pointer', fontSize:18, lineHeight:1 }}>✕</button>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>From</label>
-                  <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>To</label>
-                  <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ fontSize: 13 }} />
-                </div>
-                {/* FIXED: chips call quickApply — immediately applies */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                  {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
-                    <button key={l} onClick={() => quickApply(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
-                  ))}
-                </div>
-                <button className="btn btn-primary" onClick={applyCustom} style={{ width: '100%', padding: '10px', fontSize: 13 }}>Apply Range</button>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginBottom:16 }}>
+                {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'30 Days',d:30},{l:'90 Days',d:90}].map(({l,d})=>(
+                  <button key={l} onClick={()=>quickApply(d)} style={{ padding:'6px 12px', borderRadius:99, border:'1px solid var(--border)', background:'var(--bg3)', color:'var(--text2)', fontSize:12, fontWeight:600, cursor:'pointer' }}>{l}</button>
+                ))}
               </div>
+              <label style={{ display:'block', fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>From</label>
+              <input type="date" className="input" value={customFrom} max={customTo||todayStr} onChange={e=>setCustomFrom(e.target.value)} style={{ fontSize:14, marginBottom:12, minHeight:44 }} />
+              <label style={{ display:'block', fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>To</label>
+              <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e=>setCustomTo(e.target.value)} style={{ fontSize:14, marginBottom:16, minHeight:44 }} />
+              <button className="btn btn-primary" onClick={applyCustom} style={{ width:'100%', minHeight:44 }}>Apply</button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Mobile bottom sheet */}
-      {isMobile && (
-        <MobileDateModal
-          show={showPicker}
-          onClose={() => setShowPicker(false)}
-          customFrom={customFrom}
-          customTo={customTo}
-          setCustomFrom={setCustomFrom}
-          setCustomTo={setCustomTo}
-          todayStr={todayStr}
-          onApply={applyCustom}
-          onQuickApply={quickApply}
-        />
+      {isMobile && <DateSheet show={showPicker} onClose={()=>setShowPicker(false)} customFrom={customFrom} customTo={customTo} setCustomFrom={setCustomFrom} setCustomTo={setCustomTo} todayStr={todayStr} onApply={applyCustom} onQuick={quickApply} />}
+
+      {/* Summary strip */}
+      {summary?.totalReadings > 0 && (
+        <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr 1fr 1fr' : 'repeat(4,1fr)', gap: isMobile ? 8 : 12, marginBottom: isMobile ? 14 : 18 }}>
+          {[
+            { label:'Avg BP', value:`${summary.avgSystolic}/${summary.avgDiastolic}`, unit:'mmHg' },
+            { label:'Avg Pulse', value:summary.avgPulse>0?summary.avgPulse:'—', unit:summary.avgPulse>0?'bpm':'' },
+            { label:'Status', value:summary.category },
+            !isMobile && { label:'Trend', value:summary.trend },
+          ].filter(Boolean).map(s=>(
+            <div key={s.label} className="card" style={{ padding: isMobile ? '12px 10px' : '14px 16px' }}>
+              <div style={{ fontSize:8, fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--text3)', marginBottom:5 }}>{s.label}</div>
+              <div style={{ fontWeight:700, fontSize: isMobile ? 14 : 15, color:'var(--text)' }}>{s.value}{s.unit&&<span style={{ fontSize:10, color:'var(--text3)', fontWeight:400, marginLeft:3 }}>{s.unit}</span>}</div>
+            </div>
+          ))}
+        </div>
       )}
 
-      {/* SUMMARY STRIP */}
-      {summary && summary.totalReadings > 0 && (
-        isMobile ? (
-          /* MOBILE: 3-column compact strip */
-          <div style={{ display: 'flex', gap: 7, marginBottom: 11 }}>
-            <div className="card" style={{ flex: 1.7, padding: '9px 10px' }}>
-              <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 3 }}>Avg BP</div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{summary.avgSystolic} / {summary.avgDiastolic}</div>
-              <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>mmHg</div>
-            </div>
-            <div className="card" style={{ flex: 1, padding: '9px 10px' }}>
-              <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 3 }}>Status</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: getCategoryStyle(summary.category).color || 'var(--text)', marginTop: 2 }}>{summary.category}</div>
-            </div>
-            <div className="card" style={{ flex: 0.65, padding: '9px 10px' }}>
-              <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 3 }}>Total</div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>{summary.totalReadings}</div>
-            </div>
-          </div>
-        ) : (
-          /* WEB: full 4-column strip */
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-            {[
-              { label: 'Avg BP', value: `${summary.avgSystolic}/${summary.avgDiastolic}`, unit: 'mmHg' },
-              { label: 'Avg Pulse', value: summary.avgPulse > 0 ? summary.avgPulse : '—', unit: summary.avgPulse > 0 ? 'bpm' : '' },
-              { label: 'Status', value: summary.category },
-              { label: 'Trend', value: summary.trend },
-            ].map(s => (
-              <div key={s.label} className="card" style={{ padding: '10px 14px', flex: 1 }}>
-                <div style={{ fontSize: 9, color: 'var(--text3)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>{s.label}</div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>
-                  {s.value} <span style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 400 }}>{s.unit}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )
-      )}
-
-      {/* Content */}
       {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}><div className="spinner" /></div>
+        <div style={{ display:'flex', justifyContent:'center', padding:'80px 0' }}><div className="spinner" /></div>
       ) : readings.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '60px 24px' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, marginBottom: 8 }}>No readings found</div>
-          <div style={{ color: 'var(--text3)', marginBottom: 20 }}>Try a different time range</div>
-          <button className="btn btn-primary" onClick={() => navigate('/log')}>+ Log First Reading</button>
+        <div className="card" style={{ textAlign:'center', padding: isMobile ? '60px 20px' : '80px 32px' }}>
+          <div style={{ fontSize:56, marginBottom:16 }}>📋</div>
+          <div style={{ fontWeight:800, fontSize: isMobile ? 18 : 22, marginBottom:8 }}>No readings found</div>
+          <div style={{ color:'var(--text3)', marginBottom:24, fontSize:14 }}>Try a different time range or log a new reading</div>
+          <button className="btn btn-primary" onClick={()=>navigate('/log')} style={{ minWidth:200 }}>+ Log Reading</button>
         </div>
       ) : (
         <>
           {isMobile ? (
             <div>
-              {paginated.map((r, i) => (
+              {paginated.map((r,i) => (
                 <MobileCard key={r.id} r={r} idx={(page-1)*ITEMS_PER_PAGE+i+1} onDelete={handleDelete} deleting={deleting} />
               ))}
             </div>
           ) : (
-            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="card" style={{ padding:0, overflow:'hidden' }}>
+              <div style={{ overflowX:'auto' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse' }}>
                   <thead>
-                    <tr style={{ background: 'var(--bg3)', borderBottom: '1px solid var(--border)' }}>
+                    <tr style={{ background:'var(--bg3)', borderBottom:'1px solid var(--border)' }}>
                       {['#','Date & Time','Systolic','Diastolic','Pulse','Category','Type','Notes',''].map(h => (
-                        <th key={h} style={{ padding: '14px 16px', textAlign: ['#','Systolic','Diastolic','Pulse','Category','Type'].includes(h)?'center':'left', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                        <th key={h} style={{ padding:'14px 16px', textAlign:['#','Systolic','Diastolic','Pulse','Category','Type'].includes(h)?'center':'left', fontWeight:600, fontSize:12, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.05em', whiteSpace:'nowrap' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {paginated.map((r, i) => {
-                      const cs = getCategoryStyle(r.category);
-                      const idx = (page-1)*ITEMS_PER_PAGE+i+1;
+                    {paginated.map((r,i) => {
+                      const cs=getCategoryStyle(r.category), idx=(page-1)*ITEMS_PER_PAGE+i+1;
                       return (
-                        <tr key={r.id} style={{ borderBottom: i<paginated.length-1?'1px solid var(--border)':'none', transition: 'background 0.15s' }}
-                          onMouseEnter={e=>e.currentTarget.style.background='rgba(30,58,95,0.15)'}
+                        <tr key={r.id} style={{ borderBottom:i<paginated.length-1?'1px solid var(--border)':'none', transition:'background 0.15s' }}
+                          onMouseEnter={e=>e.currentTarget.style.background='rgba(30,58,95,0.12)'}
                           onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
                           <td style={{ padding:'14px 16px', textAlign:'center', color:'var(--text3)', fontSize:12, fontWeight:600 }}>{idx}</td>
                           <td style={{ padding:'14px 16px', color:'var(--text2)', fontSize:13, whiteSpace:'nowrap' }}>{r.recordedAt}</td>
-                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ fontFamily:'var(--font-display)', fontWeight:700, fontSize:18, color:'var(--accent)' }}>{r.systolic}</span><span style={{ color:'var(--text3)', fontSize:11, marginLeft:2 }}>mmHg</span></td>
-                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ fontFamily:'var(--font-display)', fontWeight:700, fontSize:18, color:'var(--accent2)' }}>{r.diastolic}</span><span style={{ color:'var(--text3)', fontSize:11, marginLeft:2 }}>mmHg</span></td>
-                          <td style={{ padding:'14px 16px', textAlign:'center', color:'var(--text2)', fontFamily:'var(--font-display)', fontWeight:600 }}>{r.pulse?`${r.pulse} bpm`:<span style={{color:'var(--text3)'}}>—</span>}</td>
-                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ padding:'4px 10px', borderRadius:6, background:cs.bg, border:`1px solid ${cs.border}`, color:cs.color, fontSize:12, fontFamily:'var(--font-display)', fontWeight:600 }}>{r.category}</span></td>
+                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ fontWeight:700, fontSize:18, color:'var(--val-sys)' }}>{r.systolic}</span><span style={{ color:'var(--text3)', fontSize:11, marginLeft:2 }}>mmHg</span></td>
+                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ fontWeight:700, fontSize:18, color:'var(--val-dia)' }}>{r.diastolic}</span><span style={{ color:'var(--text3)', fontSize:11, marginLeft:2 }}>mmHg</span></td>
+                          <td style={{ padding:'14px 16px', textAlign:'center', color:'var(--text2)', fontWeight:600 }}>{r.pulse?`${r.pulse} bpm`:<span style={{color:'var(--text3)'}}>—</span>}</td>
+                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ padding:'4px 10px', borderRadius:6, background:cs.bg, border:`1px solid ${cs.border}`, color:cs.color, fontSize:12, fontWeight:600 }}>{r.category}</span></td>
                           <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ fontSize:11, color:'var(--text3)', background:'var(--bg3)', padding:'3px 8px', borderRadius:4 }}>{r.readingType==='VOICE'?'🎙️':r.readingType==='TEXT'?'💬':'✍️'} {r.readingType}</span></td>
                           <td style={{ padding:'14px 16px', color:'var(--text3)', fontSize:13, maxWidth:160, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.notes||'—'}</td>
-                          <td style={{ padding:'14px 16px' }}><button className="btn btn-danger" onClick={()=>handleDelete(r.id)} disabled={deleting===r.id} style={{ fontSize:12, padding:'6px 12px' }}>{deleting===r.id?'...':'🗑️'}</button></td>
+                          <td style={{ padding:'14px 16px' }}><button className="btn btn-sm" onClick={()=>handleDelete(r.id)} disabled={deleting===r.id} style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.2)', color:'#ef4444', fontSize:12 }}>{deleting===r.id?'...':'🗑️'}</button></td>
                         </tr>
                       );
                     })}
@@ -396,15 +300,15 @@ export default function HistoryPage() {
           )}
 
           {totalPages > 1 && (
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:14, flexWrap:'wrap', gap:8 }}>
-              <div style={{ fontSize:12, color:'var(--text3)', fontFamily:'var(--font-display)' }}>
-                {(page-1)*ITEMS_PER_PAGE+1}–{Math.min(page*ITEMS_PER_PAGE,readings.length)} of {readings.length}
-              </div>
-              <div style={{ display:'flex', gap:5 }}>
-                <button onClick={()=>setPage(1)} disabled={page===1} style={{ padding:'7px 11px', borderRadius:8, border:'1px solid var(--border)', background:page===1?'var(--bg3)':'var(--card)', color:page===1?'var(--text3)':'var(--text)', cursor:page===1?'not-allowed':'pointer', fontSize:13 }}>«</button>
-                <button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={{ padding:'7px 11px', borderRadius:8, border:'1px solid var(--border)', background:page===1?'var(--bg3)':'var(--card)', color:page===1?'var(--text3)':'var(--text)', cursor:page===1?'not-allowed':'pointer', fontSize:13 }}>‹</button>
-                <button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={{ padding:'7px 11px', borderRadius:8, border:'1px solid var(--border)', background:page===totalPages?'var(--bg3)':'var(--card)', color:page===totalPages?'var(--text3)':'var(--text)', cursor:page===totalPages?'not-allowed':'pointer', fontSize:13 }}>›</button>
-                <button onClick={()=>setPage(totalPages)} disabled={page===totalPages} style={{ padding:'7px 11px', borderRadius:8, border:'1px solid var(--border)', background:page===totalPages?'var(--bg3)':'var(--card)', color:page===totalPages?'var(--text3)':'var(--text)', cursor:page===totalPages?'not-allowed':'pointer', fontSize:13 }}>»</button>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop: isMobile ? 14 : 18, flexWrap:'wrap', gap:8 }}>
+              <div style={{ fontSize:12, color:'var(--text3)' }}>{(page-1)*ITEMS_PER_PAGE+1}–{Math.min(page*ITEMS_PER_PAGE,readings.length)} of {readings.length}</div>
+              <div style={{ display:'flex', gap:6 }}>
+                {[{l:'«',fn:()=>setPage(1)},{l:'‹',fn:()=>setPage(p=>Math.max(1,p-1))},{l:'›',fn:()=>setPage(p=>Math.min(totalPages,p+1))},{l:'»',fn:()=>setPage(totalPages)}].map(({l,fn:fn_},idx) => {
+                  const disabled = (idx<2&&page===1)||(idx>=2&&page===totalPages);
+                  return (
+                    <button key={l} onClick={fn_} disabled={disabled} style={{ padding:'8px 13px', borderRadius:10, border:'1.5px solid var(--border)', background:disabled?'var(--bg3)':'var(--card)', color:disabled?'var(--text3)':'var(--text)', cursor:disabled?'not-allowed':'pointer', fontSize:14, minHeight:40 }}>{l}</button>
+                  );
+                })}
               </div>
             </div>
           )}
