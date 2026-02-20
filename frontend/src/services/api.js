@@ -3,7 +3,7 @@ import axios from 'axios';
 // In production (Railway), uses REACT_APP_API_URL env variable
 // In local development, falls back to proxy (/api → localhost:8080)
 const API = axios.create({ 
-  baseURL: process.env.REACT_APP_API_URL || '/api' 
+  baseURL: 'https://ai-bp-production.up.railway.app/api'
 });
 
 API.interceptors.request.use((config) => {
