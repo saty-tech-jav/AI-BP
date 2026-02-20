@@ -211,7 +211,7 @@ export default function LogReadingPage() {
         )}
 
         <form onSubmit={handleSaveManual}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 14 }}>
+          <div className="bp-input-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 14 }}>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text2)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Systolic *</label>
               <input className="input" type="number" min="60" max="250" placeholder="120"

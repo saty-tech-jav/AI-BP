@@ -389,7 +389,7 @@ export default function DashboardPage() {
       )}
 
       {isMobile && (
-        <button onClick={() => navigate('/log')} style={{ position: 'fixed', bottom: 20, right: 16, zIndex: 90, width: 52, height: 52, borderRadius: '50%', background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff' }}>
+        <button onClick={() => navigate('/log')} style={{ position: 'fixed', bottom: 'calc(max(env(safe-area-inset-bottom, 0px), 8px) + 62px)', right: 16, zIndex: 90, width: 52, height: 52, borderRadius: '50%', background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff' }}>
           ➕
         </button>
       )}

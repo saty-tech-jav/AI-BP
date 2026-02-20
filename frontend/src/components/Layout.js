@@ -213,10 +213,42 @@ export default function Layout() {
         )}
 
         {/* PAGE CONTENT */}
-        <div style={{ padding: isMobile ? '12px 10px 24px 10px' : 'clamp(16px,4vw,34px) clamp(14px,4vw,32px)', maxWidth: 1060, margin: '0 auto', width: '100%', flex: 1, boxSizing: 'border-box' }}>
+        <div style={{ padding: isMobile ? '12px 10px 90px 10px' : 'clamp(16px,4vw,34px) clamp(14px,4vw,32px)', maxWidth: 1060, margin: '0 auto', width: '100%', flex: 1, boxSizing: 'border-box' }}>
           <Outlet />
         </div>
 
+        {/* MOBILE BOTTOM NAV */}
+        {isMobile && (
+          <div style={{
+            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 180,
+            background: 'var(--topbar-bg)',
+            borderTop: '1px solid var(--border)',
+            display: 'flex',
+            paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+          }}>
+            {NAV.map(({ to, icon, label }) => (
+              <NavLink key={to} to={to} onClick={closeSidebar}
+                style={({ isActive }) => ({
+                  flex: 1,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  padding: '8px 4px 4px',
+                  textDecoration: 'none',
+                  color: isActive ? 'var(--accent)' : 'var(--text3)',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 10,
+                  fontWeight: isActive ? 700 : 500,
+                  gap: 3,
+                  transition: 'color 0.2s',
+                  borderTop: isActive ? '2px solid var(--accent)' : '2px solid transparent',
+                })}>
+                <span style={{ fontSize: 20 }}>{icon}</span>
+                {label}
+              </NavLink>
+            ))}
+          </div>
+        )}
 
       </main>
     </div>
