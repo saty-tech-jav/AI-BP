@@ -50,33 +50,31 @@ const fmtDate = (s) => {
   return new Date(+y, +m - 1, +d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 };
 
-/* ── Mobile Date Picker Modal (bottom sheet) ── */
 const MobileDateModal = ({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, quickSelect }) => {
   if (!show) return null;
   return (
     <>
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 500, backdropFilter: 'blur(2px)' }} />
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 501, background: 'var(--card)', borderRadius: '20px 20px 0 0', padding: '20px 16px 32px', boxShadow: '0 -8px 40px rgba(0,0,0,0.3)' }}>
-        {/* Handle bar */}
-        <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '0 auto 16px' }} />
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15, color: 'var(--text)', marginBottom: 16 }}>📅 Select Date Range</div>
-        <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, backdropFilter: 'blur(3px)' }} />
+      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', padding: '8px 16px 48px', boxShadow: '0 -8px 40px rgba(0,0,0,0.4)' }}>
+        <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '0 auto 20px' }} />
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: 'var(--text)', marginBottom: 20 }}>📅 Select Date Range</div>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
           <div style={{ flex: 1 }}>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 5 }}>From</label>
+            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>From</label>
             <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} />
           </div>
           <div style={{ flex: 1 }}>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 5 }}>To</label>
+            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>To</label>
             <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} />
           </div>
         </div>
-        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Quick Select</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 16 }}>
-          {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'90 Days',d:90}].map(({l,d}) => (
-            <button key={l} onClick={() => quickSelect(d)} style={{ padding: '6px 12px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
+        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Quick Select</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 22 }}>
+          {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
+            <button key={l} onClick={() => quickSelect(d)} style={{ padding: '9px 16px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', fontSize: 13, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
           ))}
         </div>
-        <button className="btn btn-primary" onClick={onApply} disabled={!customFrom || !customTo} style={{ width: '100%', padding: '13px', fontSize: 14 }}>
+        <button className="btn btn-primary" onClick={onApply} disabled={!customFrom || !customTo} style={{ width: '100%', padding: '15px', fontSize: 15, opacity: (!customFrom || !customTo) ? 0.4 : 1 }}>
           Apply Range
         </button>
       </div>
@@ -107,7 +105,6 @@ export default function DashboardPage() {
   const [isCustom, setIsCustom] = useState(false);
   const pickerRef = useRef(null);
 
-  // Desktop: close picker on outside click
   useEffect(() => {
     if (isMobile) return;
     const fn = (e) => { if (pickerRef.current && !pickerRef.current.contains(e.target)) setShowPicker(false); };
@@ -161,17 +158,16 @@ export default function DashboardPage() {
     ? (customFrom === customTo ? fmtDate(customFrom) : `${fmtDate(customFrom)}–${fmtDate(customTo)}`)
     : RANGES.find(r => r.value === range)?.label;
 
-  const fA = { padding: '6px 12px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 11, border: 'none', background: 'var(--btn-primary-bg)', color: '#fff', boxShadow: 'var(--btn-primary-shadow)', transition: 'all 0.2s', flexShrink: 0 };
-  const fI = { padding: '6px 12px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 11, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', transition: 'all 0.2s', flexShrink: 0 };
+  const fA = { padding: '8px 15px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, border: 'none', background: 'var(--btn-primary-bg)', color: '#fff', boxShadow: 'var(--btn-primary-shadow)', transition: 'all 0.2s', flexShrink: 0, whiteSpace: 'nowrap' };
+  const fI = { padding: '8px 15px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', transition: 'all 0.2s', flexShrink: 0, whiteSpace: 'nowrap' };
 
   return (
     <div className="fade-in">
 
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: isMobile ? 12 : 28, flexWrap: 'wrap', gap: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: isMobile ? 14 : 28, flexWrap: 'wrap', gap: 8 }}>
         <div>
-          <div style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-display)', fontWeight: 600, letterSpacing: '0.06em', marginBottom: 3 }}>{greeting} 👋</div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? 20 : 28, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+          <div style={{ fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--font-display)', fontWeight: 600, letterSpacing: '0.06em', marginBottom: 3 }}>{greeting} 👋</div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? 22 : 28, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
             {user?.fullName || user?.username}'s Dashboard
           </h1>
         </div>
@@ -180,61 +176,46 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Range Filters */}
-      <div style={{ marginBottom: isMobile ? 12 : 24 }}>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', paddingBottom: 2 }}>
-          <style>{`.filter-scroll::-webkit-scrollbar{display:none}`}</style>
-          {RANGES.slice(0, 5).map(r => (
-            <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range === r.value ? fA : fI}>{r.label}</button>
-          ))}
-
-          {/* Custom button */}
-          <div ref={pickerRef} style={{ position: 'relative', flexShrink: 0 }}>
-            <button
-              onClick={() => setShowPicker(v => !v)}
-              style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5, paddingRight: isCustom ? 24 : 12 }}
-            >
-              📅 {isCustom ? activeLabel : 'Custom'}
-            </button>
-            {isCustom && (
-              <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 8, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
-            )}
-          </div>
-        </div>
-
-        {/* DESKTOP dropdown — outside overflow container so it doesn't get clipped */}
-        {!isMobile && showPicker && (
-          <div style={{ zIndex: 200, marginTop: 8 }}>
-            <div className="date-picker-popover" style={{ background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.2)', maxWidth: 300 }}>
+      {/* Filter bar — fully scrollable single row */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: isMobile ? 14 : 24, overflowX: 'auto', paddingBottom: 6, WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {RANGES.slice(0, 5).map(r => (
+          <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range === r.value ? fA : fI}>{r.label}</button>
+        ))}
+        <div ref={pickerRef} style={{ position: 'relative', flexShrink: 0 }}>
+          <button onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5 }}>
+            📅 {isCustom ? activeLabel : 'Custom'}
+          </button>
+          {isCustom && (
+            <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 8, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
+          )}
+          {!isMobile && showPicker && (
+            <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 300, background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', width: 290 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)' }}>📅 Select Date Range</div>
-                <button onClick={() => setShowPicker(false)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: '0 4px' }}>✕</button>
+                <button onClick={() => setShowPicker(false)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>✕</button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
                   <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
                   <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ fontSize: 13 }} />
                 </div>
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Quick Select</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                    {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'90 Days',d:90}].map(({l,d}) => (
-                      <button key={l} onClick={() => quickSelect(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
-                    ))}
-                  </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                  {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'90 Days',d:90}].map(({l,d}) => (
+                    <button key={l} onClick={() => quickSelect(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
+                  ))}
                 </div>
-                <button className="btn btn-primary" onClick={applyCustom} disabled={!customFrom||!customTo} style={{ width: '100%', padding: '10px', fontSize: 13, opacity: (!customFrom||!customTo)?0.4:1 }}>Apply Range</button>
+                <button className="btn btn-primary" onClick={applyCustom} style={{ width: '100%', padding: '10px', fontSize: 13 }}>Apply Range</button>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* MOBILE bottom sheet date picker */}
+      {/* Mobile bottom sheet */}
       {isMobile && (
         <MobileDateModal
           show={showPicker}
@@ -249,46 +230,42 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* Content */}
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}><div className="spinner" /></div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 10 : 16 }}>
 
-          {/* Latest Reading */}
           {latestReading && (
             isMobile ? (
-              <div className="card" style={{ padding: '14px 14px' }}>
-                <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 8 }}>Latest Reading</div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, marginBottom: 10 }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 8, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 1 }}>SYS</div>
-                    <span style={{ fontSize: 48, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--val-sys)', lineHeight: 1, letterSpacing: '-0.04em' }}>{latestReading.systolic}</span>
+              <div className="card" style={{ padding: '16px' }}>
+                <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 10 }}>Latest Reading</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
+                  <div style={{ flex: 1, textAlign: 'center' }}>
+                    <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>SYS</div>
+                    <span style={{ fontSize: 50, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--val-sys)', lineHeight: 1, letterSpacing: '-0.04em' }}>{latestReading.systolic}</span>
                   </div>
-                  <span style={{ fontSize: 26, color: 'var(--text3)', fontWeight: 200, marginTop: 10, padding: '0 2px' }}>/</span>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 8, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 1 }}>DIA</div>
-                    <span style={{ fontSize: 36, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--val-dia)', letterSpacing: '-0.03em', lineHeight: 1 }}>{latestReading.diastolic}</span>
+                  <span style={{ fontSize: 28, color: 'var(--text3)', fontWeight: 200 }}>/</span>
+                  <div style={{ flex: 1, textAlign: 'center' }}>
+                    <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>DIA</div>
+                    <span style={{ fontSize: 38, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--val-dia)', letterSpacing: '-0.03em', lineHeight: 1 }}>{latestReading.diastolic}</span>
                   </div>
-                  <span style={{ fontSize: 10, color: 'var(--text3)', alignSelf: 'flex-end', marginBottom: 3, marginLeft: 2 }}>mmHg</span>
+                  <span style={{ fontSize: 10, color: 'var(--text3)', alignSelf: 'flex-end', marginBottom: 4 }}>mmHg</span>
                   {latestReading.pulse && (
                     <>
-                      <div style={{ width: 1, height: 36, background: 'var(--border)', margin: '0 6px' }} />
-                      <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: 8, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 1 }}>PULSE</div>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-                          <span style={{ fontSize: 22, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--val-pulse)', lineHeight: 1 }}>{latestReading.pulse}</span>
-                          <span style={{ fontSize: 9, color: 'var(--text3)' }}>bpm</span>
-                        </div>
+                      <div style={{ width: 1, height: 44, background: 'var(--border)' }} />
+                      <div style={{ flex: 1, textAlign: 'center' }}>
+                        <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>PULSE</div>
+                        <span style={{ fontSize: 26, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--val-pulse)', lineHeight: 1 }}>{latestReading.pulse}</span>
+                        <div style={{ fontSize: 9, color: 'var(--text3)' }}>bpm</div>
                       </div>
                     </>
                   )}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
                   {summary && summary.totalReadings > 0 && (
-                    <span style={{ padding: '4px 10px', borderRadius: 7, background: catStyle.bg, border: `1px solid ${catStyle.border}`, color: catStyle.color, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 11 }}>{summary.category}</span>
+                    <span style={{ padding: '4px 12px', borderRadius: 7, background: catStyle.bg, border: `1px solid ${catStyle.border}`, color: catStyle.color, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12 }}>{summary.category}</span>
                   )}
-                  <span style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-mono)' }}>{latestReading.recordedAt}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--font-mono)' }}>{latestReading.recordedAt}</span>
                 </div>
               </div>
             ) : (
@@ -320,7 +297,6 @@ export default function DashboardPage() {
             )
           )}
 
-          {/* Stat Cards */}
           {summary && summary.totalReadings > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: isMobile ? 7 : 14 }}>
               <StatCard label="Avg Systolic" value={summary.avgSystolic} unit="mmHg" sub={`${summary.minSystolic}–${summary.maxSystolic}`} colorVar="var(--val-sys)" />
@@ -329,16 +305,11 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Chart */}
           {graphData.length > 0 ? (
             <div className="card" style={{ padding: isMobile ? '14px 10px' : '24px 26px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: isMobile ? 13 : 16, color: 'var(--text)' }}>BP Trend</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 1 }}>{graphData.length} data points · {activeLabel}</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: isMobile ? 8 : 18, marginBottom: isMobile ? 10 : 16, marginTop: 6, flexWrap: 'wrap' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: isMobile ? 13 : 16, color: 'var(--text)', marginBottom: 4 }}>BP Trend</div>
+              <div style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 10 }}>{graphData.length} data points · {activeLabel}</div>
+              <div style={{ display: 'flex', gap: isMobile ? 8 : 18, marginBottom: isMobile ? 10 : 16, flexWrap: 'wrap' }}>
                 {[{color:'#3b82f6',label:'Systolic'},{color:'#06b6d4',label:'Diastolic'},{color:'#a855f7',label:'Pulse',dash:true}].map(l => (
                   <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     <div style={{ width: 14, height: 2, background: l.dash ? 'transparent' : l.color, borderRadius: 1, ...(l.dash ? { borderTop: `2px dashed ${l.color}` } : {}) }} />
@@ -370,11 +341,10 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Health Insight */}
           {summary && summary.totalReadings > 0 && (
             <div className="card" style={{ borderLeft: `3px solid ${catStyle.color || 'var(--accent)'}`, padding: isMobile ? '14px 12px' : '22px 24px' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: isMobile ? 12 : 14, color: 'var(--text)', marginBottom: 6 }}>💡 Health Insight</div>
-              <p style={{ color: 'var(--text2)', lineHeight: 1.65, fontSize: isMobile ? 12 : 14 }}>{summary.suggestion}</p>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: isMobile ? 13 : 14, color: 'var(--text)', marginBottom: 6 }}>💡 Health Insight</div>
+              <p style={{ color: 'var(--text2)', lineHeight: 1.65, fontSize: isMobile ? 13 : 14, margin: 0 }}>{summary.suggestion}</p>
               {summary.alerts?.length > 0 && (
                 <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 5 }}>
                   {summary.alerts.map((alert, i) => (
@@ -388,11 +358,8 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Mobile FAB */}
       {isMobile && (
-        <button onClick={() => navigate('/log')} style={{ position: 'fixed', bottom: 72, right: 14, zIndex: 90, width: 50, height: 50, borderRadius: '50%', background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#fff', transition: 'transform 0.2s' }}
-          onTouchStart={e => e.currentTarget.style.transform = 'scale(0.9)'}
-          onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}>
+        <button onClick={() => navigate('/log')} style={{ position: 'fixed', bottom: 76, right: 16, zIndex: 90, width: 52, height: 52, borderRadius: '50%', background: 'var(--btn-primary-bg)', border: 'none', cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: '#fff' }}>
           ➕
         </button>
       )}

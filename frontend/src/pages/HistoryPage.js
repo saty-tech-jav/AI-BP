@@ -18,75 +18,102 @@ const fmtDate = (s) => {
 
 const ITEMS_PER_PAGE = 10;
 
-// ── Mobile Reading Card ──
+/* ── Mobile Reading Card — compact single-row layout ── */
 function MobileCard({ r, idx, onDelete, deleting }) {
   const cs = getCategoryStyle(r.category);
   return (
     <div style={{
-      background: 'var(--card)', borderRadius: 16, padding: '14px 16px',
-      marginBottom: 10, border: '1px solid var(--border)',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.07)',
+      background: 'var(--card)', borderRadius: 14, padding: '12px 14px',
+      marginBottom: 8, border: '1px solid var(--border)',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
     }}>
-      {/* Row 1: number + datetime + delete */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+      {/* Top row: index + time + delete */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 22, height: 22, borderRadius: '50%', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: 'var(--text3)', flexShrink: 0 }}>{idx}</div>
-          <span style={{ fontSize: 12, color: 'var(--text3)', fontFamily: 'var(--font-mono)' }}>{r.recordedAt}</span>
+          <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'var(--bg3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: 'var(--text3)', flexShrink: 0 }}>{idx}</div>
+          <span style={{ fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--font-mono)' }}>{r.recordedAt}</span>
         </div>
         <button onClick={() => onDelete(r.id)} disabled={deleting === r.id}
-          style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 8, padding: '5px 10px', cursor: 'pointer', fontSize: 14, color: '#ef4444', lineHeight: 1 }}>
+          style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 7, padding: '4px 8px', cursor: 'pointer', fontSize: 13, color: '#ef4444', lineHeight: 1, flexShrink: 0 }}>
           {deleting === r.id ? '…' : '🗑️'}
         </button>
       </div>
 
-      {/* Row 2: Big BP values */}
-      <div style={{ display: 'flex', alignItems: 'stretch', gap: 8, marginBottom: 12 }}>
+      {/* BP values row — compact horizontal */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 10, background: 'var(--bg3)', borderRadius: 10, padding: '10px 12px' }}>
         {/* Systolic */}
-        <div style={{ flex: 1, background: 'var(--bg3)', borderRadius: 12, padding: '12px 8px', textAlign: 'center' }}>
-          <div style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Systolic</div>
-          <div style={{ fontSize: 36, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1 }}>{r.systolic}</div>
-          <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 2 }}>mmHg</div>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>SYS</div>
+          <div style={{ fontSize: 34, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1 }}>{r.systolic}</div>
+          <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>mmHg</div>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text3)', fontSize: 22, fontWeight: 300 }}>/</div>
-
+        <div style={{ color: 'var(--text3)', fontSize: 20, fontWeight: 200, padding: '0 4px' }}>/</div>
         {/* Diastolic */}
-        <div style={{ flex: 1, background: 'var(--bg3)', borderRadius: 12, padding: '12px 8px', textAlign: 'center' }}>
-          <div style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Diastolic</div>
-          <div style={{ fontSize: 36, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent2)', lineHeight: 1 }}>{r.diastolic}</div>
-          <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 2 }}>mmHg</div>
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>DIA</div>
+          <div style={{ fontSize: 34, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--accent2)', lineHeight: 1 }}>{r.diastolic}</div>
+          <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>mmHg</div>
         </div>
-
-        {/* Pulse */}
         {r.pulse && (
           <>
-            <div style={{ display: 'flex', alignItems: 'center', color: 'var(--text3)', fontSize: 22, fontWeight: 300 }}>·</div>
-            <div style={{ flex: 1, background: 'var(--bg3)', borderRadius: 12, padding: '12px 8px', textAlign: 'center' }}>
-              <div style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Pulse</div>
-              <div style={{ fontSize: 36, fontFamily: 'var(--font-display)', fontWeight: 800, color: '#a855f7', lineHeight: 1 }}>{r.pulse}</div>
-              <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 2 }}>bpm</div>
+            <div style={{ width: 1, height: 44, background: 'var(--border)', margin: '0 8px' }} />
+            <div style={{ flex: 1, textAlign: 'center' }}>
+              <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>PULSE</div>
+              <div style={{ fontSize: 28, fontFamily: 'var(--font-display)', fontWeight: 800, color: '#a855f7', lineHeight: 1 }}>{r.pulse}</div>
+              <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 1 }}>bpm</div>
             </div>
           </>
         )}
       </div>
 
-      {/* Row 3: Category + Type */}
+      {/* Bottom row: category badge */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ padding: '5px 12px', borderRadius: 8, background: cs.bg, border: `1px solid ${cs.border}`, color: cs.color, fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 700 }}>
+        <span style={{ padding: '4px 10px', borderRadius: 7, background: cs.bg, border: `1px solid ${cs.border}`, color: cs.color, fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 700 }}>
           {r.category}
         </span>
-        <span style={{ fontSize: 11, color: 'var(--text3)', background: 'var(--bg3)', padding: '4px 10px', borderRadius: 6 }}>
-          {r.readingType === 'VOICE' ? '🎙️' : r.readingType === 'TEXT' ? '💬' : '✍️'} {r.readingType}
+        <span style={{ fontSize: 10, color: 'var(--text3)', background: 'var(--bg3)', padding: '3px 8px', borderRadius: 5 }}>
+          {r.readingType === 'VOICE' ? '🎙️' : r.readingType === 'TEXT' ? '💬' : '✍️'} {r.readingType || 'MANUAL'}
         </span>
       </div>
-
-      {/* Notes */}
       {r.notes && (
-        <div style={{ marginTop: 10, fontSize: 12, color: 'var(--text3)', fontStyle: 'italic', paddingTop: 10, borderTop: '1px solid var(--border)' }}>
+        <div style={{ marginTop: 8, fontSize: 12, color: 'var(--text3)', fontStyle: 'italic', paddingTop: 8, borderTop: '1px solid var(--border)' }}>
           📝 {r.notes}
         </div>
       )}
     </div>
+  );
+}
+
+/* ── Mobile Date Picker Bottom Sheet ── */
+function MobileDateModal({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, quickSelect }) {
+  if (!show) return null;
+  return (
+    <>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, backdropFilter: 'blur(3px)' }} />
+      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', padding: '8px 16px 48px', boxShadow: '0 -8px 40px rgba(0,0,0,0.4)' }}>
+        <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '0 auto 20px' }} />
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: 'var(--text)', marginBottom: 20 }}>📅 Select Date Range</div>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>From</label>
+            <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>To</label>
+            <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} />
+          </div>
+        </div>
+        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Quick Select</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 22 }}>
+          {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
+            <button key={l} onClick={() => quickSelect(d)} style={{ padding: '9px 16px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', fontSize: 13, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
+          ))}
+        </div>
+        <button className="btn btn-primary" onClick={onApply} disabled={!customFrom || !customTo} style={{ width: '100%', padding: '15px', fontSize: 15, opacity: (!customFrom || !customTo) ? 0.4 : 1 }}>
+          Apply Range
+        </button>
+      </div>
+    </>
   );
 }
 
@@ -95,17 +122,17 @@ export default function HistoryPage() {
   const todayStr = toInputDate(new Date());
   const pickerRef = useRef(null);
 
-  const [readings,   setReadings]   = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [range,      setRange]      = useState('today');
-  const [deleting,   setDeleting]   = useState(null);
-  const [summary,    setSummary]    = useState(null);
+  const [readings, setReadings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [range, setRange] = useState('today');
+  const [deleting, setDeleting] = useState(null);
+  const [summary, setSummary] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
   const [customFrom, setCustomFrom] = useState(todayStr);
-  const [customTo,   setCustomTo]   = useState(todayStr);
-  const [isCustom,   setIsCustom]   = useState(false);
-  const [page,       setPage]       = useState(1);
-  const [isMobile,   setIsMobile]   = useState(window.innerWidth < 768);
+  const [customTo, setCustomTo] = useState(todayStr);
+  const [isCustom, setIsCustom] = useState(false);
+  const [page, setPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth < 768);
@@ -114,10 +141,11 @@ export default function HistoryPage() {
   }, []);
 
   useEffect(() => {
+    if (isMobile) return;
     const fn = (e) => { if (pickerRef.current && !pickerRef.current.contains(e.target)) setShowPicker(false); };
     document.addEventListener('mousedown', fn);
     return () => document.removeEventListener('mousedown', fn);
-  }, []);
+  }, [isMobile]);
 
   const fetchData = async () => {
     setLoading(true); setPage(1);
@@ -155,7 +183,7 @@ export default function HistoryPage() {
 
   const applyCustom = () => { if (customFrom && customTo) { setIsCustom(true); setShowPicker(false); } };
   const clearCustom = (e) => { e.stopPropagation(); setIsCustom(false); setRange('today'); setCustomFrom(todayStr); setCustomTo(todayStr); };
-  const clickRange  = (v) => { setRange(v); setIsCustom(false); setShowPicker(false); };
+  const clickRange = (v) => { setRange(v); setIsCustom(false); setShowPicker(false); };
   const quickSelect = (days) => {
     const to = new Date(), from = new Date();
     if (days > 0) from.setDate(from.getDate() - days);
@@ -167,33 +195,24 @@ export default function HistoryPage() {
     : (range === 'all' ? 'All Time' : RANGES.find(r => r.value === range)?.label);
 
   const totalPages = Math.ceil(readings.length / ITEMS_PER_PAGE);
-  const paginated  = readings.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const paginated = readings.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
-  // Export Report
   const exportReport = () => {
     const now = new Date().toLocaleString('en-IN');
     const catColor = (cat) => ({ Normal:'#10b981', Elevated:'#f59e0b', 'High BP Stage 1':'#f97316', 'High BP Stage 2':'#ef4444', 'Hypertensive Crisis':'#dc2626' }[cat] || '#64748b');
     const rows = readings.map((r, i) => `<tr class="${i%2===0?'even':'odd'}"><td class="center num">${i+1}</td><td>${r.recordedAt||'—'}</td><td class="center"><strong style="color:#3b82f6">${r.systolic}</strong> <span class="unit">mmHg</span></td><td class="center"><strong style="color:#06b6d4">${r.diastolic}</strong> <span class="unit">mmHg</span></td><td class="center">${r.pulse?`<strong style="color:#a855f7">${r.pulse}</strong> <span class="unit">bpm</span>`:'—'}</td><td class="center"><span class="badge" style="background:${catColor(r.category)}18;color:${catColor(r.category)};border:1.5px solid ${catColor(r.category)}55">${r.category}</span></td><td>${r.notes||'—'}</td></tr>`).join('');
-    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>VitalsSaathi — ${activeLabel}</title>
-<style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Inter',sans-serif;background:#f1f5f9;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.page{max-width:960px;margin:0 auto;padding:32px 24px;}.header{background:linear-gradient(135deg,#0f172a,#1e3a5f,#1d4ed8);border-radius:18px;padding:28px 32px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 30px rgba(29,78,216,.35);}.logo{display:flex;align-items:center;gap:14px;}.logo-icon{width:48px;height:48px;background:linear-gradient(145deg,#ff5f6d,#c0392b);border-radius:14px;display:flex;align-items:center;justify-content:center;}.logo-name{font-size:21px;font-weight:800;color:#fff;letter-spacing:-.02em;}.logo-name span{color:#ff6b6b;}.logo-sub{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.15em;font-weight:700;margin-top:4px;}.hright{text-align:right;}.rbadge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:99px;padding:5px 14px;font-size:11px;font-weight:700;margin-bottom:6px;}.rperiod{font-size:19px;font-weight:800;color:#fff;}.rmeta{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;}.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}.sum-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #e2e8f0;}.sum-lbl{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}.sum-val{font-size:22px;font-weight:800;color:#1e293b;letter-spacing:-.02em;}.sum-unit{font-size:10px;color:#94a3b8;margin-left:2px;}.sum-sub{font-size:11px;color:#94a3b8;margin-top:4px;}.tcard{background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;}.thead-bar{padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#f8faff,#eef2ff);}.thead-title{font-size:14px;font-weight:800;color:#1e293b;}.thead-count{background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;border-radius:99px;padding:4px 12px;font-size:11px;font-weight:700;}table{width:100%;border-collapse:collapse;}thead tr{background:#f8fafc;}th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;}.center{text-align:center;}td{padding:10px 12px;font-size:13px;color:#374151;}.num{color:#94a3b8;font-size:11px;}.even{background:#fff;}.odd{background:#f9fafb;}tr:not(:last-child) td{border-bottom:1px solid #f1f5f9;}.unit{font-size:10px;color:#94a3b8;}.badge{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;}.footer{margin-top:16px;padding:12px 18px;background:#fff;border-radius:10px;border:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;}.footer-txt{font-size:11px;color:#94a3b8;}.footer-brand{font-size:12px;font-weight:800;color:#1e293b;}.footer-brand span{color:#ff5f6d;}@media print{body{background:#fff;}.page{padding:12px;}}</style>
-</head><body><div class="page">
-<div class="header"><div class="logo"><div class="logo-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 3 14.5 3 8.5C3 5.42 5.42 3 8.5 3C10.24 3 11.91 3.81 13 5.08C14.09 3.81 15.76 3 17.5 3C20.58 3 23 5.42 23 8.5C23 14.5 12 21 12 21Z" fill="white"/><path d="M6 11h2l1.5-3 2 6 1.5-4.5 1 1.5H18" stroke="rgba(255,100,100,0.9)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="logo-name">VitalsSaathi<span>.AI</span></div><div class="logo-sub">Blood Pressure Monitor</div></div></div><div class="hright"><div class="rbadge">📋 Health Report</div><div class="rperiod">${activeLabel}</div><div class="rmeta">Generated: ${now}</div></div></div>
-${summary&&summary.totalReadings>0?`<div class="sum-grid"><div class="sum-card"><div class="sum-lbl">Avg Systolic</div><div class="sum-val">${summary.avgSystolic}<span class="sum-unit">mmHg</span></div><div class="sum-sub">Range: ${summary.minSystolic}–${summary.maxSystolic}</div></div><div class="sum-card"><div class="sum-lbl">Avg Diastolic</div><div class="sum-val">${summary.avgDiastolic}<span class="sum-unit">mmHg</span></div><div class="sum-sub">Range: ${summary.minDiastolic}–${summary.maxDiastolic}</div></div><div class="sum-card"><div class="sum-lbl">Avg Pulse</div><div class="sum-val">${summary.avgPulse>0?summary.avgPulse:'—'}<span class="sum-unit">${summary.avgPulse>0?'bpm':''}</span></div><div class="sum-sub">${summary.maxPulse>0?`Range: ${summary.minPulse}–${summary.maxPulse}`:'—'}</div></div><div class="sum-card"><div class="sum-lbl">Status</div><div class="sum-val" style="font-size:16px;color:${catColor(summary.category)}">${summary.category}</div><div class="sum-sub">${readings.length} total readings</div></div></div>`:''}
-<div class="tcard"><div class="thead-bar"><div class="thead-title">📊 Reading Details</div><div class="thead-count">${readings.length} readings</div></div>
-<table><thead><tr><th class="center">#</th><th>Date &amp; Time</th><th class="center">Systolic</th><th class="center">Diastolic</th><th class="center">Pulse</th><th class="center">Category</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table></div>
-<div class="footer"><div class="footer-txt">⚕️ For personal tracking only. Consult a doctor for medical advice.</div><div class="footer-brand">Vitals<span>Saathi</span>.AI</div></div>
-</div><script>window.onload=()=>window.print();</script></body></html>`;
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>VitalsSaathi — ${activeLabel}</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:sans-serif;background:#f1f5f9;}.page{max-width:960px;margin:0 auto;padding:32px 24px;}.header{background:linear-gradient(135deg,#0f172a,#1d4ed8);border-radius:18px;padding:28px 32px;margin-bottom:18px;color:#fff;display:flex;justify-content:space-between;align-items:center;}.logo-name{font-size:21px;font-weight:800;}.logo-name span{color:#ff6b6b;}.rperiod{font-size:19px;font-weight:800;}.rmeta{font-size:11px;opacity:.5;margin-top:4px;}table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;}th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;background:#f8fafc;}td{padding:10px 12px;font-size:13px;color:#374151;}.center{text-align:center;}.even{background:#fff;}.odd{background:#f9fafb;}tr:not(:last-child) td{border-bottom:1px solid #f1f5f9;}.unit{font-size:10px;color:#94a3b8;}.badge{padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;}.num{color:#94a3b8;font-size:11px;}.footer{margin-top:16px;text-align:right;font-size:11px;color:#94a3b8;}</style></head><body><div class="page"><div class="header"><div><div class="logo-name">VitalsSaathi<span>.AI</span></div><div style="font-size:9px;opacity:.4;text-transform:uppercase;letter-spacing:.15em;margin-top:4px">Blood Pressure Monitor</div></div><div style="text-align:right"><div class="rperiod">${activeLabel}</div><div class="rmeta">Generated: ${now}</div></div></div><table><thead><tr><th class="center">#</th><th>Date &amp; Time</th><th class="center">Systolic</th><th class="center">Diastolic</th><th class="center">Pulse</th><th class="center">Category</th><th>Notes</th></tr></thead><tbody>${rows}</tbody></table><div class="footer">⚕️ For personal tracking only. Consult a doctor for medical advice.</div></div><script>window.onload=()=>window.print();</script></body></html>`;
     window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
   };
 
-  const fA = { padding: '7px 14px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, border: 'none', background: 'var(--btn-primary-bg)', color: '#fff', boxShadow: 'var(--btn-primary-shadow)', whiteSpace: 'nowrap', flexShrink: 0 };
-  const fI = { padding: '7px 14px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', whiteSpace: 'nowrap', flexShrink: 0 };
+  const fA = { padding: '8px 15px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, border: 'none', background: 'var(--btn-primary-bg)', color: '#fff', boxShadow: 'var(--btn-primary-shadow)', whiteSpace: 'nowrap', flexShrink: 0 };
+  const fI = { padding: '8px 15px', borderRadius: 99, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 12, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', whiteSpace: 'nowrap', flexShrink: 0 };
 
   return (
     <div className="fade-in">
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16, gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14, gap: 10 }}>
         <div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? 22 : 28, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em' }}>Reading History</h1>
           <p style={{ color: 'var(--text3)', marginTop: 3, fontSize: 13 }}>
@@ -202,71 +221,84 @@ ${summary&&summary.totalReadings>0?`<div class="sum-grid"><div class="sum-card">
           </p>
         </div>
         <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-          <button onClick={exportReport} style={{ padding: '9px 13px', borderRadius: 10, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 5 }}>
-            📄 {isMobile ? '' : 'Export Report'}
+          <button onClick={exportReport} style={{ padding: '9px 12px', borderRadius: 10, cursor: 'pointer', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 5 }}>
+            📄{!isMobile && ' Export'}
           </button>
           <button className="btn btn-primary" onClick={() => navigate('/log')} style={{ fontSize: 12, padding: '9px 13px' }}>+ Log</button>
         </div>
       </div>
 
-      {/* Filters — scrollable on mobile */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 14 }}>
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, WebkitOverflowScrolling: 'touch', msOverflowStyle: 'none', scrollbarWidth: 'none', flex: 1 }}>
-          <button onClick={() => clickRange('all')}   style={!isCustom && range==='all'   ? fA : fI}>All Time</button>
-          <button onClick={() => clickRange('today')} style={!isCustom && range==='today' ? fA : fI}>Today</button>
-          {RANGES.slice(1, 5).map(r => (
-            <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range===r.value ? fA : fI}>{r.label}</button>
-          ))}
-        </div>
-
-        {/* Custom picker — outside the overflow div so dropdown never clips */}
+      {/* Filter bar — fully scrollable, Custom picker inside */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 14, overflowX: 'auto', paddingBottom: 6, WebkitOverflowScrolling: 'touch', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+        <button onClick={() => clickRange('all')} style={!isCustom && range === 'all' ? fA : fI}>All Time</button>
+        <button onClick={() => clickRange('today')} style={!isCustom && range === 'today' ? fA : fI}>Today</button>
+        {RANGES.slice(1, 5).map(r => (
+          <button key={r.value} onClick={() => clickRange(r.value)} style={!isCustom && range === r.value ? fA : fI}>{r.label}</button>
+        ))}
+        {/* Custom picker button */}
         <div ref={pickerRef} style={{ position: 'relative', flexShrink: 0 }}>
-          <button onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5, paddingRight: isCustom ? 26 : 14 }}>
+          <button onClick={() => setShowPicker(v => !v)} style={{ ...(isCustom ? fA : fI), display: 'flex', alignItems: 'center', gap: 5 }}>
             📅 {isCustom ? activeLabel : 'Custom'}
           </button>
           {isCustom && (
             <button onClick={clearCustom} style={{ position: 'absolute', top: -5, right: -5, width: 17, height: 17, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 9, cursor: 'pointer', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>✕</button>
           )}
-          {showPicker && (
-            <div style={{ position: 'absolute', top: 'calc(100% + 10px)', right: 0, zIndex: 300, background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', minWidth: 270, width: 'min(calc(100vw - 24px), 310px)' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)', marginBottom: 14 }}>📅 Select Date Range</div>
+          {/* Desktop dropdown only */}
+          {!isMobile && showPicker && (
+            <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 300, background: 'var(--card)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius)', padding: 18, boxShadow: '0 12px 40px rgba(0,0,0,0.25)', width: 290 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--text)' }}>📅 Select Date Range</div>
+                <button onClick={() => setShowPicker(false)} style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>✕</button>
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>From</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>From</label>
                   <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} style={{ fontSize: 13 }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>To</label>
+                  <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 5 }}>To</label>
                   <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ fontSize: 13 }} />
                 </div>
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 7 }}>Quick Select</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                    {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
-                      <button key={l} onClick={() => quickSelect(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
-                    ))}
-                  </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                  {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
+                    <button key={l} onClick={() => quickSelect(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
+                  ))}
                 </div>
-                <button className="btn btn-primary" onClick={applyCustom} disabled={!customFrom||!customTo} style={{ width: '100%', padding: '10px', fontSize: 13, opacity: (!customFrom||!customTo)?0.4:1 }}>Apply Range</button>
+                <button className="btn btn-primary" onClick={applyCustom} style={{ width: '100%', padding: '10px', fontSize: 13 }}>Apply Range</button>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Summary — 2 cols on mobile, 4 on desktop */}
+      {/* Mobile bottom sheet */}
+      {isMobile && (
+        <MobileDateModal
+          show={showPicker}
+          onClose={() => setShowPicker(false)}
+          customFrom={customFrom}
+          customTo={customTo}
+          setCustomFrom={setCustomFrom}
+          setCustomTo={setCustomTo}
+          todayStr={todayStr}
+          onApply={applyCustom}
+          quickSelect={quickSelect}
+        />
+      )}
+
+      {/* Summary strip — horizontal compact on mobile */}
       {summary && summary.totalReadings > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4,1fr)', gap: 10, marginBottom: 16 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 14, overflowX: 'auto', paddingBottom: 2 }}>
           {[
-            { label: 'Avg BP',    value: `${summary.avgSystolic}/${summary.avgDiastolic}`, unit: 'mmHg' },
+            { label: 'Avg BP', value: `${summary.avgSystolic}/${summary.avgDiastolic}`, unit: 'mmHg' },
             { label: 'Avg Pulse', value: summary.avgPulse > 0 ? summary.avgPulse : '—', unit: summary.avgPulse > 0 ? 'bpm' : '' },
-            { label: 'Status',    value: summary.category },
-            { label: 'Trend',     value: summary.trend },
+            { label: 'Status', value: summary.category },
+            { label: 'Trend', value: summary.trend },
           ].map(s => (
-            <div key={s.label} className="card" style={{ padding: '12px 14px' }}>
-              <div style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 5 }}>{s.label}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>
-                {s.value} <span style={{ fontSize: 11, color: 'var(--text3)', fontWeight: 400 }}>{s.unit}</span>
+            <div key={s.label} className="card" style={{ padding: '10px 14px', flexShrink: 0, minWidth: isMobile ? 120 : 'auto', flex: isMobile ? '0 0 auto' : 1 }}>
+              <div style={{ fontSize: 9, color: 'var(--text3)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>{s.label}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--text)' }}>
+                {s.value} <span style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 400 }}>{s.unit}</span>
               </div>
             </div>
           ))}
@@ -285,7 +317,6 @@ ${summary&&summary.totalReadings>0?`<div class="sum-grid"><div class="sum-card">
         </div>
       ) : (
         <>
-          {/* MOBILE: Card layout */}
           {isMobile ? (
             <div>
               {paginated.map((r, i) => (
@@ -293,7 +324,6 @@ ${summary&&summary.totalReadings>0?`<div class="sum-grid"><div class="sum-card">
               ))}
             </div>
           ) : (
-            /* DESKTOP: Table layout */
             <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -330,7 +360,6 @@ ${summary&&summary.totalReadings>0?`<div class="sum-grid"><div class="sum-card">
             </div>
           )}
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:14, flexWrap:'wrap', gap:8 }}>
               <div style={{ fontSize:12, color:'var(--text3)', fontFamily:'var(--font-display)' }}>
@@ -339,11 +368,6 @@ ${summary&&summary.totalReadings>0?`<div class="sum-grid"><div class="sum-card">
               <div style={{ display:'flex', gap:5 }}>
                 <button onClick={()=>setPage(1)} disabled={page===1} style={{ padding:'7px 11px', borderRadius:8, border:'1px solid var(--border)', background:page===1?'var(--bg3)':'var(--card)', color:page===1?'var(--text3)':'var(--text)', cursor:page===1?'not-allowed':'pointer', fontSize:13 }}>«</button>
                 <button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={{ padding:'7px 11px', borderRadius:8, border:'1px solid var(--border)', background:page===1?'var(--bg3)':'var(--card)', color:page===1?'var(--text3)':'var(--text)', cursor:page===1?'not-allowed':'pointer', fontSize:13 }}>‹</button>
-                {Array.from({length:totalPages},(_,i)=>i+1).filter(p=>p===1||p===totalPages||Math.abs(p-page)<=1).reduce((acc,p,idx,arr)=>{if(idx>0&&p-arr[idx-1]>1)acc.push('...');acc.push(p);return acc;},[]).map((p,idx)=>
-                  p==='...'
-                    ? <span key={`e${idx}`} style={{ color:'var(--text3)', padding:'0 2px', lineHeight:'32px' }}>…</span>
-                    : <button key={p} onClick={()=>setPage(p)} style={{ padding:'7px 11px', borderRadius:8, border:p===page?'none':'1px solid var(--border)', background:p===page?'var(--btn-primary-bg)':'var(--card)', color:p===page?'#fff':'var(--text)', cursor:'pointer', fontSize:13, fontWeight:700 }}>{p}</button>
-                )}
                 <button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={{ padding:'7px 11px', borderRadius:8, border:'1px solid var(--border)', background:page===totalPages?'var(--bg3)':'var(--card)', color:page===totalPages?'var(--text3)':'var(--text)', cursor:page===totalPages?'not-allowed':'pointer', fontSize:13 }}>›</button>
                 <button onClick={()=>setPage(totalPages)} disabled={page===totalPages} style={{ padding:'7px 11px', borderRadius:8, border:'1px solid var(--border)', background:page===totalPages?'var(--bg3)':'var(--card)', color:page===totalPages?'var(--text3)':'var(--text)', cursor:page===totalPages?'not-allowed':'pointer', fontSize:13 }}>»</button>
               </div>
