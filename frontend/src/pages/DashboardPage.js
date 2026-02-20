@@ -50,33 +50,63 @@ const fmtDate = (s) => {
   return new Date(+y, +m - 1, +d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 };
 
-const MobileDateModal = ({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, quickSelect }) => {
+const MobileDateModal = ({ show, onClose, customFrom, customTo, setCustomFrom, setCustomTo, todayStr, onApply, quickSelect, onQuickApply }) => {
   if (!show) return null;
+  const fmtDisplay = (s) => {
+    if (!s) return '—';
+    const [y, m, d] = s.split('-');
+    return new Date(+y, +m - 1, +d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  };
   return (
     <>
-      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, backdropFilter: 'blur(3px)' }} />
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', padding: '8px 16px max(env(safe-area-inset-bottom, 16px), 16px)', boxShadow: '0 -8px 40px rgba(0,0,0,0.4)' }}>
-        <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '0 auto 20px' }} />
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: 'var(--text)', marginBottom: 20 }}>📅 Select Date Range</div>
-        <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
-          <div style={{ flex: 1 }}>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>From</label>
-            <input type="date" className="input" value={customFrom} max={customTo} onChange={e => setCustomFrom(e.target.value)} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 6 }}>To</label>
-            <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} />
-          </div>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 1000, backdropFilter: 'blur(4px)' }} />
+      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1001, background: 'var(--bg3)', borderRadius: '20px 20px 0 0', boxShadow: '0 -8px 40px rgba(0,0,0,0.5)', maxHeight: '88vh', overflowY: 'auto' }}>
+        {/* Handle */}
+        <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border-strong)', margin: '12px auto 0' }} />
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 18px 0' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, color: 'var(--text)' }}>📅 Date Range</div>
+          <button onClick={onClose} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text3)', fontSize: 15 }}>✕</button>
         </div>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Quick Select</div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 22 }}>
-          {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90}].map(({l,d}) => (
-            <button key={l} onClick={() => quickSelect(d)} style={{ padding: '9px 16px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', fontSize: 13, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
-          ))}
+        <div style={{ padding: '16px 18px max(env(safe-area-inset-bottom, 20px), 20px)' }}>
+          {/* Quick select grid — 3 cols, thumb-friendly */}
+          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Quick Select</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 20 }}>
+            {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'3 Months',d:90},{l:'6 Months',d:180}].map(({l,d}) => (
+              <button key={l} onClick={() => onQuickApply(d)} style={{ padding: '10px 6px', borderRadius: 10, border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--text2)', fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer', textAlign: 'center' }}>{l}</button>
+            ))}
+          </div>
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+            <div style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Or pick dates</div>
+            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+          </div>
+          {/* Stacked date inputs — vertical, not side by side */}
+          <div style={{ marginBottom: 6 }}>
+            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>From</label>
+            <input type="date" className="input" value={customFrom} max={customTo || todayStr} onChange={e => setCustomFrom(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px', marginBottom: 12 }} />
+            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 6 }}>To</label>
+            <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e => setCustomTo(e.target.value)} style={{ width: '100%', fontSize: 15, padding: '12px 14px' }} />
+          </div>
+          {/* Range preview */}
+          {customFrom && customTo && (
+            <div style={{ display: 'flex', alignItems: 'center', background: 'var(--card)', borderRadius: 10, padding: '10px 14px', margin: '14px 0', gap: 8 }}>
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>From</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtDisplay(customFrom)}</div>
+              </div>
+              <div style={{ color: 'var(--text3)', fontSize: 14 }}>→</div>
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 2 }}>To</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{fmtDisplay(customTo)}</div>
+              </div>
+            </div>
+          )}
+          <button className="btn btn-primary" onClick={onApply} disabled={!customFrom || !customTo} style={{ width: '100%', padding: '14px', fontSize: 15, opacity: (!customFrom || !customTo) ? 0.4 : 1, marginTop: 4 }}>
+            Apply Range
+          </button>
         </div>
-        <button className="btn btn-primary" onClick={onApply} disabled={!customFrom || !customTo} style={{ width: '100%', padding: '15px', fontSize: 15, opacity: (!customFrom || !customTo) ? 0.4 : 1 }}>
-          Apply Range
-        </button>
       </div>
     </>
   );
@@ -150,6 +180,14 @@ export default function DashboardPage() {
     if (days > 0) from.setDate(from.getDate() - days);
     setCustomFrom(toInputDate(from)); setCustomTo(toInputDate(to));
   };
+  const quickApplyMobile = (days) => {
+    const to = new Date(), from = new Date();
+    if (days > 0) from.setDate(from.getDate() - days);
+    const fromStr = toInputDate(from), toStr = toInputDate(to);
+    setCustomFrom(fromStr); setCustomTo(toStr);
+    // Apply immediately
+    setIsCustom(true); setShowPicker(false);
+  };
 
   const catStyle = summary ? getCategoryStyle(summary.category) : {};
   const hour = new Date().getHours();
@@ -205,7 +243,7 @@ export default function DashboardPage() {
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                   {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'14 Days',d:14},{l:'30 Days',d:30},{l:'90 Days',d:90}].map(({l,d}) => (
-                    <button key={l} onClick={() => quickSelect(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
+                    <button key={l} onClick={() => quickApplyMobile(d)} style={{ padding: '5px 10px', borderRadius: 99, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, cursor: 'pointer' }}>{l}</button>
                   ))}
                 </div>
                 <button className="btn btn-primary" onClick={applyCustom} style={{ width: '100%', padding: '10px', fontSize: 13 }}>Apply Range</button>
@@ -227,6 +265,7 @@ export default function DashboardPage() {
           todayStr={todayStr}
           onApply={applyCustom}
           quickSelect={quickSelect}
+          onQuickApply={quickApplyMobile}
         />
       )}
 
@@ -237,26 +276,27 @@ export default function DashboardPage() {
 
           {latestReading && (
             isMobile ? (
-              <div className="card" style={{ padding: '16px' }}>
+              <div className="card" style={{ padding: '14px' }}>
                 <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 10 }}>Latest Reading</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 12, background: 'rgba(255,255,255,0.04)', borderRadius: 12, padding: '11px 10px' }}>
                   <div style={{ flex: 1, textAlign: 'center' }}>
                     <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>SYS</div>
-                    <span style={{ fontSize: 50, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--val-sys)', lineHeight: 1, letterSpacing: '-0.04em' }}>{latestReading.systolic}</span>
+                    <span style={{ fontSize: 42, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--val-sys)', lineHeight: 1, letterSpacing: '-0.04em' }}>{latestReading.systolic}</span>
+                    <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 2 }}>mmHg</div>
                   </div>
-                  <span style={{ fontSize: 28, color: 'var(--text3)', fontWeight: 200 }}>/</span>
+                  <span style={{ fontSize: 20, color: 'var(--text3)', fontWeight: 200 }}>/</span>
                   <div style={{ flex: 1, textAlign: 'center' }}>
                     <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>DIA</div>
-                    <span style={{ fontSize: 38, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--val-dia)', letterSpacing: '-0.03em', lineHeight: 1 }}>{latestReading.diastolic}</span>
+                    <span style={{ fontSize: 32, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--val-dia)', letterSpacing: '-0.03em', lineHeight: 1 }}>{latestReading.diastolic}</span>
+                    <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 2 }}>mmHg</div>
                   </div>
-                  <span style={{ fontSize: 10, color: 'var(--text3)', alignSelf: 'flex-end', marginBottom: 4 }}>mmHg</span>
                   {latestReading.pulse && (
                     <>
-                      <div style={{ width: 1, height: 44, background: 'var(--border)' }} />
+                      <div style={{ width: 1, height: 40, background: 'var(--border)', margin: '0 8px' }} />
                       <div style={{ flex: 1, textAlign: 'center' }}>
                         <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>PULSE</div>
                         <span style={{ fontSize: 26, fontFamily: 'var(--font-display)', fontWeight: 800, color: 'var(--val-pulse)', lineHeight: 1 }}>{latestReading.pulse}</span>
-                        <div style={{ fontSize: 9, color: 'var(--text3)' }}>bpm</div>
+                        <div style={{ fontSize: 9, color: 'var(--text3)', marginTop: 2 }}>bpm</div>
                       </div>
                     </>
                   )}
