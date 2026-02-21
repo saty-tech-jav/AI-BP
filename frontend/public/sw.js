@@ -1,31 +1,30 @@
-const CACHE_NAME = 'vitalssaathi-v1';
+// ── INCREMENT THIS VERSION ON EVERY DEPLOY to bust the cache ──
+const CACHE_VERSION = 'v12';
+const CACHE_NAME = 'vitalssaathi-' + CACHE_VERSION;
 
-// Core files to cache for offline support
 const urlsToCache = [
   '/',
   '/index.html',
-  '/dashboard',
   '/manifest.json',
-  '/favicon.ico',
-  '/logo192.png',
 ];
 
-// ── Install: cache core files ──
+// Install: open new cache
 self.addEventListener('install', event => {
-  console.log('[SW] Installing...');
+  console.log('[SW] Installing', CACHE_NAME);
+  // Skip waiting IMMEDIATELY so new SW takes over right away
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(urlsToCache).catch(err => {
-        console.log('[SW] Cache addAll error (non-fatal):', err);
+        console.log('[SW] Cache error (non-fatal):', err);
       });
     })
   );
-  self.skipWaiting();
 });
 
-// ── Activate: clean old caches ──
+// Activate: DELETE ALL OLD CACHES immediately
 self.addEventListener('activate', event => {
-  console.log('[SW] Activating...');
+  console.log('[SW] Activating', CACHE_NAME, '- clearing old caches');
   event.waitUntil(
     caches.keys().then(cacheNames =>
       Promise.all(
@@ -36,44 +35,49 @@ self.addEventListener('activate', event => {
             return caches.delete(name);
           })
       )
-    )
+    ).then(() => {
+      // Take control of all open tabs immediately
+      return self.clients.claim();
+    }).then(() => {
+      // Tell all clients to reload so they get fresh JS/CSS
+      return self.clients.matchAll({ type: 'window' }).then(clients => {
+        clients.forEach(client => {
+          client.postMessage({ type: 'SW_UPDATED', version: CACHE_VERSION });
+        });
+      });
+    })
   );
-  self.clients.claim();
 });
 
-// ── Fetch: network first, cache fallback ──
+// Fetch: NETWORK FIRST always — never serve stale JS/CSS from cache
 self.addEventListener('fetch', event => {
-  // Skip API calls — always fetch from network
-  if (event.request.url.includes('/api/')) {
+  // Skip API calls
+  if (event.request.url.includes('/api/')) return;
+  // Skip non-GET
+  if (event.request.method !== 'GET') return;
+
+  // For JS and CSS files: NETWORK ONLY, never cache (always get fresh code)
+  const url = new URL(event.request.url);
+  if (url.pathname.match(/\.(js|css)$/)) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
     return;
   }
 
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') {
-    return;
-  }
-
+  // For everything else: network first, cache as fallback
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Cache successful responses
         if (response && response.status === 200) {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone);
-          });
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
       })
-      .catch(() => {
-        // Network failed — try cache
-        return caches.match(event.request).then(cached => {
-          if (cached) return cached;
-          // Fallback to index.html for navigation requests
-          if (event.request.mode === 'navigate') {
-            return caches.match('/index.html');
-          }
-        });
-      })
+      .catch(() => caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        if (event.request.mode === 'navigate') return caches.match('/index.html');
+      }))
   );
 });
