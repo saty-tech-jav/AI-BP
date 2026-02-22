@@ -231,27 +231,39 @@ export default function DashboardPage() {
               <div style={{ fontSize:10, fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--text3)', marginBottom:16 }}>Latest Reading</div>
 
               {/* Big BP numbers */}
-              <div style={{ display:'flex', alignItems:'center', gap: isMobile ? 8 : 20, marginBottom:16 }}>
-                <div style={{ textAlign:'center', flex:1 }}>
-                  <div style={{ fontSize:9, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Systolic</div>
-                  <div style={{ fontSize: isMobile ? 56 : 72, fontWeight:800, color:'var(--val-sys)', lineHeight:1, letterSpacing:'-0.04em' }}>{latest.systolic}</div>
-                  <div style={{ fontSize:10, color:'var(--text3)', marginTop:4 }}>mmHg</div>
+              <div style={{ marginBottom:16 }}>
+                {/* SYS / DIA row — always full width */}
+                <div style={{ display:'flex', alignItems:'center', background: isMobile ? 'var(--bg3)' : 'transparent', borderRadius: isMobile ? 14 : 0, padding: isMobile ? '16px 12px' : '0 0 0 0', marginBottom: isMobile && latest.pulse ? 10 : 0 }}>
+                  <div style={{ textAlign:'center', flex:1 }}>
+                    <div style={{ fontSize:9, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Systolic</div>
+                    <div style={{ fontSize: isMobile ? 60 : 72, fontWeight:800, color:'var(--val-sys)', lineHeight:1, letterSpacing:'-0.04em' }}>{latest.systolic}</div>
+                    <div style={{ fontSize:10, color:'var(--text3)', marginTop:4 }}>mmHg</div>
+                  </div>
+                  <div style={{ fontSize: isMobile ? 36 : 40, color:'var(--border-strong)', fontWeight:200, lineHeight:1, alignSelf:'center', padding:'0 8px' }}>/</div>
+                  <div style={{ textAlign:'center', flex:1 }}>
+                    <div style={{ fontSize:9, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Diastolic</div>
+                    <div style={{ fontSize: isMobile ? 60 : 56, fontWeight:800, color:'var(--val-dia)', lineHeight:1, letterSpacing:'-0.03em' }}>{latest.diastolic ?? '—'}</div>
+                    <div style={{ fontSize:10, color:'var(--text3)', marginTop:4 }}>mmHg</div>
+                  </div>
+                  {/* Pulse inline only on desktop */}
+                  {latest.pulse && !isMobile && (
+                    <>
+                      <div style={{ width:1, height:80, background:'var(--border)', flexShrink:0 }} />
+                      <div style={{ textAlign:'center', flex:0.8 }}>
+                        <div style={{ fontSize:9, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Pulse</div>
+                        <div style={{ fontSize:44, fontWeight:800, color:'var(--val-pulse)', lineHeight:1, letterSpacing:'-0.03em' }}>{latest.pulse}</div>
+                        <div style={{ fontSize:10, color:'var(--text3)', marginTop:4 }}>bpm</div>
+                      </div>
+                    </>
+                  )}
                 </div>
-                <div style={{ fontSize: isMobile ? 32 : 40, color:'var(--border-strong)', fontWeight:200, lineHeight:1, alignSelf:'center' }}>/</div>
-                <div style={{ textAlign:'center', flex:1 }}>
-                  <div style={{ fontSize:9, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Diastolic</div>
-                  <div style={{ fontSize: isMobile ? 44 : 56, fontWeight:700, color:'var(--val-dia)', lineHeight:1, letterSpacing:'-0.03em' }}>{latest.diastolic}</div>
-                  <div style={{ fontSize:10, color:'var(--text3)', marginTop:4 }}>mmHg</div>
-                </div>
-                {latest.pulse && (
-                  <>
-                    <div style={{ width:1, height: isMobile ? 60 : 80, background:'var(--border)', flexShrink:0 }} />
-                    <div style={{ textAlign:'center', flex:0.8 }}>
-                      <div style={{ fontSize:9, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Pulse</div>
-                      <div style={{ fontSize: isMobile ? 34 : 44, fontWeight:800, color:'var(--val-pulse)', lineHeight:1, letterSpacing:'-0.03em' }}>{latest.pulse}</div>
-                      <div style={{ fontSize:10, color:'var(--text3)', marginTop:4 }}>bpm</div>
-                    </div>
-                  </>
+                {/* Pulse on its own row on mobile */}
+                {latest.pulse && isMobile && (
+                  <div style={{ display:'flex', justifyContent:'center', alignItems:'center', gap:8, background:'var(--bg3)', borderRadius:10, padding:'10px 16px' }}>
+                    <div style={{ fontSize:9, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.1em' }}>Pulse</div>
+                    <div style={{ fontSize:28, fontWeight:800, color:'var(--val-pulse)', lineHeight:1 }}>{latest.pulse}</div>
+                    <div style={{ fontSize:10, color:'var(--text3)' }}>bpm</div>
+                  </div>
                 )}
               </div>
 
@@ -269,13 +281,13 @@ export default function DashboardPage() {
           {summary?.totalReadings > 0 && (
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap: isMobile ? 8 : 14 }}>
               {[
-                { label:'Avg Systolic', value:summary.avgSystolic, unit:'mmHg', sub:`${summary.minSystolic}–${summary.maxSystolic}`, color:'var(--val-sys)' },
-                { label:'Avg Diastolic', value:summary.avgDiastolic, unit:'mmHg', sub:`${summary.minDiastolic}–${summary.maxDiastolic}`, color:'var(--val-dia)' },
+                { label: isMobile ? 'Avg SYS' : 'Avg Systolic', value:summary.avgSystolic, unit:'mmHg', sub:`${summary.minSystolic}–${summary.maxSystolic}`, color:'var(--val-sys)' },
+                { label: isMobile ? 'Avg DIA' : 'Avg Diastolic', value:summary.avgDiastolic, unit:'mmHg', sub:`${summary.minDiastolic}–${summary.maxDiastolic}`, color:'var(--val-dia)' },
                 { label:'Avg Pulse', value:summary.avgPulse>0?summary.avgPulse:'—', unit:summary.avgPulse>0?'bpm':'', sub:summary.maxPulse>0?`${summary.minPulse}–${summary.maxPulse}`:'', color:'var(--val-pulse)' },
               ].map(s => (
-                <div key={s.label} className="card" style={{ padding: isMobile ? '14px 12px' : '18px 16px' }}>
-                  <div style={{ fontSize:8, fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--text3)', marginBottom:6 }}>{s.label}</div>
-                  <div style={{ fontSize: isMobile ? 28 : 34, fontWeight:800, color:s.color, lineHeight:1, letterSpacing:'-0.03em', marginBottom:3 }}>{s.value}</div>
+                <div key={s.label} className="card" style={{ padding: isMobile ? '14px 10px' : '18px 16px' }}>
+                  <div style={{ fontSize: isMobile ? 9 : 8, fontWeight:800, letterSpacing:'0.06em', textTransform:'uppercase', color:'var(--text3)', marginBottom:6 }}>{s.label}</div>
+                  <div style={{ fontSize: isMobile ? 26 : 34, fontWeight:800, color:s.color, lineHeight:1, letterSpacing:'-0.03em', marginBottom:3 }}>{s.value}</div>
                   <div style={{ fontSize:9, color:'var(--text3)' }}>{s.unit}</div>
                   {s.sub && <div style={{ fontSize:9, color:'var(--text3)', fontFamily:'var(--mono)', marginTop:2 }}>{s.sub}</div>}
                 </div>

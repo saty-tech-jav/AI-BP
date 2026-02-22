@@ -180,6 +180,7 @@ public class ReadingService {
 
     private LocalDateTime parseSince(String range) {
         return switch (range != null ? range.toLowerCase() : "7d") {
+            case "today" -> LocalDateTime.now().toLocalDate().atStartOfDay();
             case "1d" -> LocalDateTime.now().minusDays(1);
             case "3d" -> LocalDateTime.now().minusDays(3);
             case "5d" -> LocalDateTime.now().minusDays(5);
@@ -193,6 +194,8 @@ public class ReadingService {
     }
 
     public String classifyBP(double sys, double dia) {
+
+        if (sys <= 0 || dia <= 0) return "Unknown";
 
         if (sys < 90 || dia < 60) return "Low BP";
 
@@ -287,7 +290,9 @@ public class ReadingService {
         res.setNotes(r.getNotes());
         res.setRecordedAt(r.getRecordedAt().format(FORMATTER));
         res.setReadingType(r.getReadingType() != null ? r.getReadingType().name() : "MANUAL");
-        res.setCategory(classifyBP(r.getSystolic(), r.getDiastolic()));
+        res.setCategory(classifyBP(
+                r.getSystolic() != null ? r.getSystolic() : 0,
+                r.getDiastolic() != null ? r.getDiastolic() : 0));
         return res;
     }
 }
