@@ -25,8 +25,31 @@ export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem('bp-theme') || 'dark');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
 
   useEffect(() => { applyTheme(theme); }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      setShowInstallBtn(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('appinstalled', () => setShowInstallBtn(false));
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') setShowInstallBtn(false);
+    setInstallPrompt(null);
+  };
 
   useEffect(() => {
     const fn = () => {
@@ -206,6 +229,17 @@ export default function Layout() {
 
           {/* Right: theme + avatar */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {showInstallBtn && (
+              <button onClick={handleInstall} style={{
+                height: 38, borderRadius: 10, padding: '0 12px',
+                background: 'var(--btn-bg)', border: 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', fontSize: 12, color: '#fff', fontWeight: 700, gap: 4,
+                boxShadow: 'var(--btn-shadow)',
+              }}>
+                📲 Install
+              </button>
+            )}
             <button onClick={cycleTheme} style={{
               width: 38, height: 38, borderRadius: 10,
               background: 'var(--bg3)', border: '1px solid var(--border)',
