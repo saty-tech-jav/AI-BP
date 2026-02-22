@@ -23,28 +23,27 @@ function MobileCard({ r, idx, onDelete, deleting }) {
         </button>
       </div>
 
-      {/* Big numbers */}
-      <div style={{ display:'flex', alignItems:'center', background:'var(--bg3)', borderRadius:12, padding:'14px 10px', marginBottom:12, gap:4 }}>
-        <div style={{ flex:1, textAlign:'center' }}>
-          <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>SYS</div>
-          <div style={{ fontSize:36, fontWeight:800, color:'var(--val-sys)', lineHeight:1, letterSpacing:'-0.03em' }}>{r.systolic}</div>
-          <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>mmHg</div>
-        </div>
-        <div style={{ color:'var(--text3)', fontSize:20, fontWeight:200, padding:'0 4px' }}>/</div>
-        <div style={{ flex:1, textAlign:'center' }}>
-          <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>DIA</div>
-          <div style={{ fontSize:36, fontWeight:800, color:'var(--val-dia)', lineHeight:1, letterSpacing:'-0.03em' }}>{r.diastolic ?? '—'}</div>
-          <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>mmHg</div>
+      {/* Big numbers — grid so diastolic is never cut off */}
+      <div style={{ marginBottom:12 }}>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 24px 1fr', alignItems:'center', background:'var(--bg3)', borderRadius:12, padding:'14px 8px', marginBottom: r.pulse ? 8 : 0 }}>
+          <div style={{ textAlign:'center' }}>
+            <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>SYS</div>
+            <div style={{ fontSize:40, fontWeight:800, color:'var(--val-sys)', lineHeight:1 }}>{r.systolic ?? '-'}</div>
+            <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>mmHg</div>
+          </div>
+          <div style={{ color:'var(--text3)', fontSize:20, fontWeight:200, textAlign:'center' }}>/</div>
+          <div style={{ textAlign:'center' }}>
+            <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>DIA</div>
+            <div style={{ fontSize:40, fontWeight:800, color:'var(--val-dia)', lineHeight:1 }}>{r.diastolic ?? '-'}</div>
+            <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>mmHg</div>
+          </div>
         </div>
         {r.pulse && (
-          <>
-            <div style={{ width:1, height:44, background:'var(--border)', flexShrink:0, margin:'0 4px' }} />
-            <div style={{ flex:0.85, textAlign:'center' }}>
-              <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>PULSE</div>
-              <div style={{ fontSize:28, fontWeight:800, color:'var(--val-pulse)', lineHeight:1 }}>{r.pulse}</div>
-              <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>bpm</div>
-            </div>
-          </>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, background:'var(--bg3)', borderRadius:10, padding:'10px 16px' }}>
+            <span style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em' }}>PULSE</span>
+            <span style={{ fontSize:28, fontWeight:800, color:'var(--val-pulse)', lineHeight:1 }}>{r.pulse}</span>
+            <span style={{ fontSize:9, color:'var(--text3)' }}>bpm</span>
+          </div>
         )}
       </div>
 
