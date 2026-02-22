@@ -1,5 +1,5 @@
 // ── INCREMENT THIS VERSION ON EVERY DEPLOY to bust the cache ──
-const CACHE_VERSION = 'v12';
+const CACHE_VERSION = 'v13';
 const CACHE_NAME = 'vitalssaathi-' + CACHE_VERSION;
 
 const urlsToCache = [
