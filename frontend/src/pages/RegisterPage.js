@@ -1,0 +1,55 @@
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+export default function RegisterPage() {
+  const { register } = useAuth();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ fullName:'', username:'', email:'', password:'' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await register(form.fullName, form.username, form.email, form.password);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.message || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const inp = { width:'100%', padding:'10px 14px', borderRadius:10, border:'1px solid var(--border)', background:'var(--bg3)', color:'var(--text)', fontSize:14, boxSizing:'border-box' };
+
+  return (
+    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg)', padding:20 }}>
+      <div className="card" style={{ width:'100%', maxWidth:400, padding:'36px 32px' }}>
+        <div style={{ textAlign:'center', marginBottom:28 }}>
+          <div style={{ fontSize:32, marginBottom:8 }}>❤️</div>
+          <h1 style={{ fontWeight:800, fontSize:22, color:'var(--text)', margin:0 }}>VitalsSaathi<span style={{ color:'#ff5f6d' }}>.AI</span></h1>
+          <p style={{ color:'var(--text3)', fontSize:13, marginTop:6 }}>Create your account</p>
+        </div>
+        {error && <div style={{ background:'rgba(239,68,68,0.12)', border:'1px solid rgba(239,68,68,0.35)', borderRadius:10, padding:'10px 14px', color:'#ef4444', fontSize:13, marginBottom:16 }}>{error}</div>}
+        <form onSubmit={handleSubmit}>
+          {[['fullName','Full Name','text'],['username','Username','text'],['email','Email','email'],['password','Password','password']].map(([key,label,type])=>(
+            <div key={key} style={{ marginBottom:14 }}>
+              <label style={{ display:'block', fontSize:12, fontWeight:600, color:'var(--text2)', marginBottom:6 }}>{label}</label>
+              <input type={type} value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))} required style={inp} />
+            </div>
+          ))}
+          <button type="submit" disabled={loading} style={{ width:'100%', padding:'12px', borderRadius:10, border:'none', background:'var(--btn-bg)', color:'#fff', fontWeight:700, fontSize:15, cursor:loading?'not-allowed':'pointer', opacity:loading?0.7:1, marginTop:6 }}>
+            {loading ? 'Creating account…' : 'Create Account'}
+          </button>
+        </form>
+        <p style={{ textAlign:'center', marginTop:20, fontSize:13, color:'var(--text3)' }}>
+          Already have an account?{' '}
+          <Link to="/login" style={{ color:'var(--accent)', fontWeight:600, textDecoration:'none' }}>Sign in</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
