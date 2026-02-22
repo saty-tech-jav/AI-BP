@@ -1,0 +1,19 @@
+:80 {
+    root * /srv
+
+    encode gzip
+
+    # Never cache service worker and manifest
+    @nocache path /sw.js /manifest.json
+    header @nocache Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    header @nocache Pragma "no-cache"
+
+    # Security headers
+    header X-Frame-Options "SAMEORIGIN"
+    header X-Content-Type-Options "nosniff"
+
+    # React Router - all unknown paths serve index.html
+    try_files {path} /index.html
+
+    file_server
+}
