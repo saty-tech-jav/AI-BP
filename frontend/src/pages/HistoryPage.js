@@ -5,54 +5,55 @@ import { useNavigate } from 'react-router-dom';
 
 const toInputDate = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const fmtDate = (s) => { if (!s) return ''; const [y,m,d]=s.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); };
-const ITEMS_PER_PAGE = 15;
+const ITEMS_PER_PAGE = 10;
 
-function ReadingCard({ r, idx, onDelete, deleting }) {
+// Reliable mobile detection using matchMedia (CSS-based, always correct)
+const isMobileDevice = () => window.matchMedia('(max-width: 767px)').matches;
+
+function MobileCard({ r, idx, onDelete, deleting }) {
   const cs = getCategoryStyle(r.category);
   return (
-    <div className="reading-card">
-      <div className="reading-card-header">
+    <div style={{ background:'var(--card)', borderRadius:14, padding:'16px 14px', marginBottom:10, border:'1px solid var(--card-border)' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:14 }}>
         <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <span className="reading-idx">{idx}</span>
-          <span className="reading-time">{r.recordedAt}</span>
+          <div style={{ width:22, height:22, borderRadius:'50%', background:'var(--bg3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:700, color:'var(--text3)', flexShrink:0 }}>{idx}</div>
+          <span style={{ fontSize:12, color:'var(--text3)' }}>{r.recordedAt}</span>
         </div>
-        <button
-          onClick={() => onDelete(r.id)}
-          disabled={deleting === r.id}
-          className="delete-btn"
-        >
-          {deleting === r.id ? '…' : '🗑️'}
+        <button onClick={() => onDelete(r.id)} disabled={deleting===r.id}
+          style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:8, padding:'6px 12px', cursor:'pointer', fontSize:13, color:'#ef4444', minHeight:36 }}>
+          {deleting===r.id ? '…' : '🗑️'}
         </button>
       </div>
 
-      <div className="reading-values">
-        <div className="reading-val-box">
-          <div className="val-label">SYS</div>
-          <div className="val-num sys">{r.systolic}</div>
-          <div className="val-unit">mmHg</div>
+      {/* Grid layout — never overflows */}
+      <div style={{ display:'grid', gridTemplateColumns: r.pulse ? '1fr 1fr 1fr' : '1fr 1fr', gap:8, marginBottom:12 }}>
+        <div style={{ background:'var(--bg3)', borderRadius:10, padding:'12px 6px', textAlign:'center' }}>
+          <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>SYS</div>
+          <div style={{ fontSize:34, fontWeight:800, color:'var(--val-sys)', lineHeight:1 }}>{r.systolic}</div>
+          <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>mmHg</div>
         </div>
-        <div className="reading-val-box">
-          <div className="val-label">DIA</div>
-          <div className="val-num dia">{r.diastolic}</div>
-          <div className="val-unit">mmHg</div>
+        <div style={{ background:'var(--bg3)', borderRadius:10, padding:'12px 6px', textAlign:'center' }}>
+          <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>DIA</div>
+          <div style={{ fontSize:34, fontWeight:800, color:'var(--val-dia)', lineHeight:1 }}>{r.diastolic}</div>
+          <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>mmHg</div>
         </div>
         {r.pulse && (
-          <div className="reading-val-box">
-            <div className="val-label">PULSE</div>
-            <div className="val-num pulse">{r.pulse}</div>
-            <div className="val-unit">bpm</div>
+          <div style={{ background:'var(--bg3)', borderRadius:10, padding:'12px 6px', textAlign:'center' }}>
+            <div style={{ fontSize:9, color:'var(--text3)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:3 }}>PULSE</div>
+            <div style={{ fontSize:34, fontWeight:800, color:'var(--val-pulse)', lineHeight:1 }}>{r.pulse}</div>
+            <div style={{ fontSize:9, color:'var(--text3)', marginTop:3 }}>bpm</div>
           </div>
         )}
       </div>
 
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
-        <span style={{ padding:'4px 10px', borderRadius:7, background:cs.bg, border:`1px solid ${cs.border}`, color:cs.color, fontSize:11, fontWeight:700 }}>{r.category}</span>
-        <span style={{ fontSize:10, color:'var(--text3)', background:'var(--bg3)', padding:'3px 8px', borderRadius:5 }}>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <span style={{ padding:'5px 12px', borderRadius:7, background:cs.bg, border:`1px solid ${cs.border}`, color:cs.color, fontSize:11, fontWeight:700 }}>{r.category}</span>
+        <span style={{ fontSize:11, color:'var(--text3)', background:'var(--bg3)', padding:'4px 10px', borderRadius:6 }}>
           {r.readingType==='VOICE'?'🎙️':r.readingType==='TEXT'?'💬':'✍️'} {r.readingType||'MANUAL'}
         </span>
       </div>
       {r.notes && (
-        <div style={{ marginTop:8, fontSize:12, color:'var(--text3)', fontStyle:'italic', paddingTop:8, borderTop:'1px solid var(--border)' }}>📝 {r.notes}</div>
+        <div style={{ marginTop:10, fontSize:12, color:'var(--text3)', fontStyle:'italic', paddingTop:10, borderTop:'1px solid var(--border)' }}>📝 {r.notes}</div>
       )}
     </div>
   );
@@ -62,23 +63,23 @@ function DateSheet({ show, onClose, customFrom, customTo, setCustomFrom, setCust
   if (!show) return null;
   return (
     <>
-      <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:1000 }} />
-      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:1001, background:'var(--bg2)', borderRadius:'20px 20px 0 0', maxHeight:'85vh', overflowY:'auto' }}>
-        <div style={{ width:36, height:4, borderRadius:2, background:'var(--border-strong)', margin:'12px auto 0' }} />
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 18px 0' }}>
-          <span style={{ fontWeight:800, fontSize:16, color:'var(--text)' }}>📅 Date Range</span>
+      <div onClick={onClose} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:1000, backdropFilter:'blur(4px)' }} />
+      <div style={{ position:'fixed', bottom:0, left:0, right:0, zIndex:1001, background:'var(--bg2)', borderRadius:'24px 24px 0 0', maxHeight:'90vh', overflowY:'auto' }}>
+        <div style={{ width:40, height:4, borderRadius:2, background:'var(--border-strong)', margin:'14px auto 0' }} />
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 20px 0' }}>
+          <span style={{ fontWeight:800, fontSize:17, color:'var(--text)' }}>📅 Date Range</span>
           <button onClick={onClose} style={{ width:32, height:32, borderRadius:8, border:'1px solid var(--border)', background:'var(--bg3)', color:'var(--text3)', cursor:'pointer', fontSize:16 }}>✕</button>
         </div>
-        <div style={{ padding:'16px 18px calc(env(safe-area-inset-bottom,16px) + 20px)' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8, marginBottom:18 }}>
+        <div style={{ padding:'20px 20px calc(env(safe-area-inset-bottom, 24px) + 24px)' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10, marginBottom:24 }}>
             {[{l:'Today',d:0},{l:'7 Days',d:7},{l:'30 Days',d:30},{l:'90 Days',d:90},{l:'6 Months',d:180},{l:'1 Year',d:365}].map(({l,d}) => (
-              <button key={l} onClick={() => onQuick(d)} style={{ padding:'13px 4px', borderRadius:10, border:'1.5px solid var(--border)', background:'var(--card)', color:'var(--text2)', fontSize:13, fontWeight:600, cursor:'pointer' }}>{l}</button>
+              <button key={l} onClick={() => onQuick(d)} style={{ padding:'14px 8px', borderRadius:12, border:'1.5px solid var(--border)', background:'var(--card)', color:'var(--text2)', fontSize:13, fontWeight:600, cursor:'pointer', minHeight:50 }}>{l}</button>
             ))}
           </div>
-          <label style={{ display:'block', fontSize:11, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:7 }}>From</label>
-          <input type="date" className="input" value={customFrom} max={customTo||todayStr} onChange={e=>setCustomFrom(e.target.value)} style={{ marginBottom:12 }} />
-          <label style={{ display:'block', fontSize:11, fontWeight:700, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:7 }}>To</label>
-          <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e=>setCustomTo(e.target.value)} style={{ marginBottom:18 }} />
+          <label style={{ display:'block', fontSize:12, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', marginBottom:8 }}>From</label>
+          <input type="date" className="input" value={customFrom} max={customTo||todayStr} onChange={e=>setCustomFrom(e.target.value)} style={{ marginBottom:14 }} />
+          <label style={{ display:'block', fontSize:12, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', marginBottom:8 }}>To</label>
+          <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e=>setCustomTo(e.target.value)} style={{ marginBottom:20 }} />
           <button className="btn btn-primary" onClick={onApply} style={{ width:'100%' }}>Apply Range</button>
         </div>
       </div>
@@ -89,6 +90,7 @@ function DateSheet({ show, onClose, customFrom, customTo, setCustomFrom, setCust
 export default function HistoryPage() {
   const navigate = useNavigate();
   const todayStr = toInputDate(new Date());
+  const pickerRef = useRef(null);
   const [readings, setReadings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState('today');
@@ -99,6 +101,22 @@ export default function HistoryPage() {
   const [customTo, setCustomTo] = useState(todayStr);
   const [isCustom, setIsCustom] = useState(false);
   const [page, setPage] = useState(1);
+  // FIX: Use matchMedia instead of window.innerWidth — always returns correct CSS pixels
+  const [isMobile, setIsMobile] = useState(isMobileDevice());
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const fn = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', fn);
+    return () => mq.removeEventListener('change', fn);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const fn = (e) => { if (pickerRef.current && !pickerRef.current.contains(e.target)) setTimeout(() => setShowPicker(false), 100); };
+    document.addEventListener('mousedown', fn);
+    return () => document.removeEventListener('mousedown', fn);
+  }, [isMobile]);
 
   const fetchData = async () => {
     setLoading(true); setPage(1);
@@ -112,7 +130,7 @@ export default function HistoryPage() {
         [readRes, sumRes] = await Promise.all([readingsAPI.getByRange(range), readingsAPI.getSummary(range)]);
       }
       let data = readRes.data||[];
-      if (range==='today' && !isCustom) data = data.filter(r=>(r.recordedAt||'').slice(0,10)===todayStr);
+      if (range==='today'&&!isCustom) data = data.filter(r=>(r.recordedAt||'').slice(0,10)===todayStr);
       setReadings(data); setSummary(sumRes.data);
     } catch(e) { console.error(e); setReadings([]); }
     finally { setLoading(false); }
@@ -145,92 +163,128 @@ export default function HistoryPage() {
   const totalPages = Math.ceil(readings.length/ITEMS_PER_PAGE);
   const paginated = readings.slice((page-1)*ITEMS_PER_PAGE, page*ITEMS_PER_PAGE);
 
-  const btnA = { padding:'9px 14px', borderRadius:99, cursor:'pointer', fontWeight:700, fontSize:13, border:'none', background:'var(--btn-bg)', color:'#fff', whiteSpace:'nowrap', flexShrink:0, minHeight:42 };
-  const btnI = { padding:'9px 14px', borderRadius:99, cursor:'pointer', fontWeight:600, fontSize:13, border:'1.5px solid var(--border)', background:'var(--card)', color:'var(--text2)', whiteSpace:'nowrap', flexShrink:0, minHeight:42 };
+  const fA = { padding:'9px 18px', borderRadius:99, cursor:'pointer', fontWeight:700, fontSize:13, border:'none', background:'var(--btn-bg)', color:'#fff', boxShadow:'var(--btn-shadow)', whiteSpace:'nowrap', flexShrink:0, minHeight:42 };
+  const fI = { padding:'9px 18px', borderRadius:99, cursor:'pointer', fontWeight:600, fontSize:13, border:'1.5px solid var(--border)', background:'var(--card)', color:'var(--text2)', whiteSpace:'nowrap', flexShrink:0, minHeight:42 };
 
   return (
-    <div className="fade-in page-container">
-      <div className="page-header">
+    <div className="fade-in" style={{ padding: isMobile ? '14px 12px 100px' : '24px 28px' }}>
+
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:18, gap:10 }}>
         <div>
-          <h1 className="page-title">History</h1>
-          <p className="page-sub">
+          <h1 style={{ fontWeight:800, fontSize: isMobile ? 26 : 30, color:'var(--text)', letterSpacing:'-0.02em' }}>History</h1>
+          <p style={{ color:'var(--text3)', marginTop:3, fontSize:13 }}>
             {readings.length} reading{readings.length!==1?'s':''}
-            {activeLabel && <span style={{ marginLeft:5, color:'var(--accent)', fontWeight:600 }}>· {activeLabel}</span>}
+            {activeLabel && <span style={{ marginLeft:6, color:'var(--accent)', fontWeight:600 }}>· {activeLabel}</span>}
           </p>
         </div>
         <button className="btn btn-primary btn-sm" onClick={() => navigate('/log')}>+ Log</button>
       </div>
 
-      {/* Filter scroll row */}
-      <div className="filter-wrap">
-        <div className="filter-scroll">
-          <button onClick={()=>clickRange('all')} style={!isCustom&&range==='all'?btnA:btnI}>All</button>
-          <button onClick={()=>clickRange('today')} style={!isCustom&&range==='today'?btnA:btnI}>Today</button>
+      <div ref={pickerRef} style={{ position:'relative', marginBottom:16 }}>
+        <div style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:4, WebkitOverflowScrolling:'touch', msOverflowStyle:'none', scrollbarWidth:'none' }}>
+          <button onClick={()=>clickRange('all')} style={!isCustom&&range==='all'?fA:fI}>All</button>
+          <button onClick={()=>clickRange('today')} style={!isCustom&&range==='today'?fA:fI}>Today</button>
           {RANGES.slice(1,5).map(r=>(
-            <button key={r.value} onClick={()=>clickRange(r.value)} style={!isCustom&&range===r.value?btnA:btnI}>{r.label}</button>
+            <button key={r.value} onClick={()=>clickRange(r.value)} style={!isCustom&&range===r.value?fA:fI}>{r.label}</button>
           ))}
           <div style={{ position:'relative', flexShrink:0 }}>
-            <button onClick={()=>setShowPicker(v=>!v)} style={{ ...(isCustom?btnA:btnI), display:'flex', alignItems:'center', gap:5 }}>
+            <button onClick={()=>setShowPicker(v=>!v)} style={{ ...(isCustom?fA:fI), display:'flex', alignItems:'center', gap:5 }}>
               📅 {isCustom?activeLabel:'Custom'}
             </button>
             {isCustom && (
-              <button onClick={clearCustom} style={{ position:'absolute', top:-5, right:-5, width:18, height:18, borderRadius:'50%', background:'#ef4444', border:'2px solid var(--bg)', color:'#fff', fontSize:9, cursor:'pointer', fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', zIndex:2 }}>✕</button>
+              <button onClick={clearCustom} style={{ position:'absolute', top:-6, right:-6, width:18, height:18, borderRadius:'50%', background:'#ef4444', border:'2px solid var(--bg)', color:'#fff', fontSize:8, cursor:'pointer', fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', zIndex:2, lineHeight:1 }}>✕</button>
             )}
           </div>
         </div>
+        {!isMobile && showPicker && (
+          <div style={{ position:'absolute', top:'calc(100% + 6px)', right:0, zIndex:9999, background:'var(--bg2)', border:'1px solid var(--border-strong)', borderRadius:16, padding:20, boxShadow:'0 16px 48px rgba(0,0,0,0.35)', width:300 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+              <span style={{ fontWeight:800, fontSize:14, color:'var(--text)' }}>📅 Date Range</span>
+              <button onClick={()=>setShowPicker(false)} style={{ background:'none', border:'none', color:'var(--text3)', cursor:'pointer', fontSize:18 }}>✕</button>
+            </div>
+            <label style={{ display:'block', fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', marginBottom:6 }}>From</label>
+            <input type="date" className="input" value={customFrom} max={customTo||todayStr} onChange={e=>setCustomFrom(e.target.value)} style={{ marginBottom:12, minHeight:44 }} />
+            <label style={{ display:'block', fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', marginBottom:6 }}>To</label>
+            <input type="date" className="input" value={customTo} min={customFrom} max={todayStr} onChange={e=>setCustomTo(e.target.value)} style={{ marginBottom:16, minHeight:44 }} />
+            <button className="btn btn-primary" onClick={applyCustom} style={{ width:'100%', minHeight:44 }}>Apply</button>
+          </div>
+        )}
       </div>
 
-      <DateSheet show={showPicker} onClose={()=>setShowPicker(false)}
-        customFrom={customFrom} customTo={customTo}
-        setCustomFrom={setCustomFrom} setCustomTo={setCustomTo}
-        todayStr={todayStr} onApply={applyCustom} onQuick={quickApply} />
+      {isMobile && <DateSheet show={showPicker} onClose={()=>setShowPicker(false)} customFrom={customFrom} customTo={customTo} setCustomFrom={setCustomFrom} setCustomTo={setCustomTo} todayStr={todayStr} onApply={applyCustom} onQuick={quickApply} />}
 
-      {/* Summary */}
       {summary?.totalReadings > 0 && (
-        <div className="summary-grid">
-          <div className="card summary-card">
-            <div className="summary-label">Avg BP</div>
-            <div className="summary-val">{summary.avgSystolic}/{summary.avgDiastolic} <span className="summary-unit">mmHg</span></div>
-          </div>
-          <div className="card summary-card">
-            <div className="summary-label">Avg Pulse</div>
-            <div className="summary-val">{summary.avgPulse>0?summary.avgPulse:'—'} <span className="summary-unit">{summary.avgPulse>0?'bpm':''}</span></div>
-          </div>
-          <div className="card summary-card">
-            <div className="summary-label">Status</div>
-            <div className="summary-val" style={{ fontSize:14 }}>{summary.category}</div>
-          </div>
-          <div className="card summary-card">
-            <div className="summary-label">Trend</div>
-            <div className="summary-val" style={{ fontSize:14 }}>{summary.trend}</div>
-          </div>
+        <div style={{ display:'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4,1fr)', gap: isMobile ? 8 : 12, marginBottom:14 }}>
+          {[
+            { label:'Avg BP', value:`${summary.avgSystolic}/${summary.avgDiastolic}`, unit:'mmHg' },
+            { label:'Avg Pulse', value:summary.avgPulse>0?summary.avgPulse:'—', unit:summary.avgPulse>0?'bpm':'' },
+            !isMobile && { label:'Status', value:summary.category },
+            !isMobile && { label:'Trend', value:summary.trend },
+          ].filter(Boolean).map(s=>(
+            <div key={s.label} className="card" style={{ padding:'12px' }}>
+              <div style={{ fontSize:8, fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--text3)', marginBottom:5 }}>{s.label}</div>
+              <div style={{ fontWeight:700, fontSize:14, color:'var(--text)' }}>{s.value}{s.unit&&<span style={{ fontSize:10, color:'var(--text3)', fontWeight:400, marginLeft:3 }}>{s.unit}</span>}</div>
+            </div>
+          ))}
         </div>
       )}
 
       {loading ? (
         <div style={{ display:'flex', justifyContent:'center', padding:'80px 0' }}><div className="spinner" /></div>
       ) : readings.length === 0 ? (
-        <div className="card" style={{ textAlign:'center', padding:'48px 20px' }}>
-          <div style={{ fontSize:48, marginBottom:12 }}>📋</div>
-          <div style={{ fontWeight:800, fontSize:18, marginBottom:6 }}>No readings found</div>
-          <div style={{ color:'var(--text3)', marginBottom:20, fontSize:13 }}>Try a different range</div>
+        <div className="card" style={{ textAlign:'center', padding:'60px 20px' }}>
+          <div style={{ fontSize:56, marginBottom:16 }}>📋</div>
+          <div style={{ fontWeight:800, fontSize:18, marginBottom:8 }}>No readings found</div>
+          <div style={{ color:'var(--text3)', marginBottom:24, fontSize:14 }}>Try a different time range or log a new reading</div>
           <button className="btn btn-primary" onClick={()=>navigate('/log')}>+ Log Reading</button>
         </div>
       ) : (
         <>
-          {/* Cards — always shown, CSS hides on desktop and shows table instead */}
-          <div className="cards-list">
-            {paginated.map((r,i) => (
-              <ReadingCard key={r.id} r={r} idx={(page-1)*ITEMS_PER_PAGE+i+1} onDelete={handleDelete} deleting={deleting} />
-            ))}
-          </div>
-
+          {isMobile ? (
+            <div>
+              {paginated.map((r,i) => (
+                <MobileCard key={r.id} r={r} idx={(page-1)*ITEMS_PER_PAGE+i+1} onDelete={handleDelete} deleting={deleting} />
+              ))}
+            </div>
+          ) : (
+            <div className="card" style={{ padding:0, overflow:'hidden' }}>
+              <div style={{ overflowX:'auto' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse' }}>
+                  <thead>
+                    <tr style={{ background:'var(--bg3)', borderBottom:'1px solid var(--border)' }}>
+                      {['#','Date & Time','Systolic','Diastolic','Pulse','Category','Type','Notes',''].map(h => (
+                        <th key={h} style={{ padding:'14px 16px', textAlign:['#','Systolic','Diastolic','Pulse','Category','Type'].includes(h)?'center':'left', fontWeight:600, fontSize:12, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.05em', whiteSpace:'nowrap' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginated.map((r,i) => {
+                      const cs=getCategoryStyle(r.category), idx=(page-1)*ITEMS_PER_PAGE+i+1;
+                      return (
+                        <tr key={r.id} style={{ borderBottom:i<paginated.length-1?'1px solid var(--border)':'none' }}>
+                          <td style={{ padding:'14px 16px', textAlign:'center', color:'var(--text3)', fontSize:12 }}>{idx}</td>
+                          <td style={{ padding:'14px 16px', color:'var(--text2)', fontSize:13, whiteSpace:'nowrap' }}>{r.recordedAt}</td>
+                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ fontWeight:700, fontSize:18, color:'var(--val-sys)' }}>{r.systolic}</span></td>
+                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ fontWeight:700, fontSize:18, color:'var(--val-dia)' }}>{r.diastolic}</span></td>
+                          <td style={{ padding:'14px 16px', textAlign:'center', color:'var(--text2)', fontWeight:600 }}>{r.pulse||'—'}</td>
+                          <td style={{ padding:'14px 16px', textAlign:'center' }}><span style={{ padding:'4px 10px', borderRadius:6, background:cs.bg, border:`1px solid ${cs.border}`, color:cs.color, fontSize:12, fontWeight:600 }}>{r.category}</span></td>
+                          <td style={{ padding:'14px 16px', textAlign:'center', fontSize:11, color:'var(--text3)' }}>{r.readingType==='VOICE'?'🎙️':r.readingType==='TEXT'?'💬':'✍️'}</td>
+                          <td style={{ padding:'14px 16px', color:'var(--text3)', fontSize:13, maxWidth:160, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.notes||'—'}</td>
+                          <td style={{ padding:'14px 16px' }}><button className="btn btn-sm" onClick={()=>handleDelete(r.id)} disabled={deleting===r.id} style={{ background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.2)', color:'#ef4444', fontSize:12 }}>{deleting===r.id?'...':'🗑️'}</button></td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
           {totalPages > 1 && (
             <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:14, flexWrap:'wrap', gap:8 }}>
               <div style={{ fontSize:12, color:'var(--text3)' }}>{(page-1)*ITEMS_PER_PAGE+1}–{Math.min(page*ITEMS_PER_PAGE,readings.length)} of {readings.length}</div>
               <div style={{ display:'flex', gap:6 }}>
-                <button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={{ padding:'8px 18px', borderRadius:10, border:'1.5px solid var(--border)', background: page===1?'var(--bg3)':'var(--card)', color: page===1?'var(--text3)':'var(--text)', cursor: page===1?'not-allowed':'pointer', fontSize:16, minHeight:42 }}>‹</button>
-                <button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={{ padding:'8px 18px', borderRadius:10, border:'1.5px solid var(--border)', background: page===totalPages?'var(--bg3)':'var(--card)', color: page===totalPages?'var(--text3)':'var(--text)', cursor: page===totalPages?'not-allowed':'pointer', fontSize:16, minHeight:42 }}>›</button>
+                <button onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page===1} style={{ padding:'8px 16px', borderRadius:10, border:'1.5px solid var(--border)', background:page===1?'var(--bg3)':'var(--card)', color:page===1?'var(--text3)':'var(--text)', cursor:page===1?'not-allowed':'pointer', fontSize:16, minHeight:40 }}>‹</button>
+                <button onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page===totalPages} style={{ padding:'8px 16px', borderRadius:10, border:'1.5px solid var(--border)', background:page===totalPages?'var(--bg3)':'var(--card)', color:page===totalPages?'var(--text3)':'var(--text)', cursor:page===totalPages?'not-allowed':'pointer', fontSize:16, minHeight:40 }}>›</button>
               </div>
             </div>
           )}
